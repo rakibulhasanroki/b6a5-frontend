@@ -1,19 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const space = Space_Grotesk({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
-  title: "Planora",
+  title: {
+    default: "Planora",
+    template: "%s | Planora",
+  },
   description: `Planora is a secure, JWT-protected (using Better Auth) backend platform where Admins and registered 
   Users can create, manage, and participate in events.
   Events can be **Public or Private** and may include **registration fees`,
@@ -25,11 +23,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${space.variable}  h-full antialiased`}>
+      <body className="min-h-screen flex flex-col">{children}</body>
     </html>
   );
 }
