@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import ProfileDropdown from "@/components/modules/profile/ProfileDropdown";
 
 export default function AuthButtons({ isLoggedIn }: { isLoggedIn: boolean }) {
   const baseBtn =
@@ -39,6 +40,7 @@ export default function AuthButtons({ isLoggedIn }: { isLoggedIn: boolean }) {
               Dashboard
             </Button>
           </Link>
+          <ProfileDropdown />
         </>
       )}
     </div>
