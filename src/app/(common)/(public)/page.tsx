@@ -6,7 +6,10 @@ import UpcomingEvents from "@/components/modules/home/UpcomingEvents";
 export default function HomePage() {
   return (
     <>
-      <div>Home Page</div>
+      <HeroSection />
+      <UpcomingEvents />
+      <Categories />
+      <CTASection />
     </>
   );
 }
