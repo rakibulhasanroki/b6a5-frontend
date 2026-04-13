@@ -1,11 +1,13 @@
+import Footer from "@/components/layouts/Footer";
+import Navbar from "@/components/layouts/Navbar/Navbar";
 import React from "react";
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <div>Navbar</div>
-      <main>{children}</main>
-      <div>Footer</div>
+      <Navbar />
+      <main className="flex-1">{children}</main>
+      <Footer />
     </>
   );
 };
