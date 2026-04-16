@@ -15,7 +15,7 @@ export default async function proxy(request: NextRequest) {
 
   if (isProtected && !isAuthenticated) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname + search);
+    loginUrl.searchParams.set("redirectTo", pathname + search);
 
     return NextResponse.redirect(loginUrl);
   }
