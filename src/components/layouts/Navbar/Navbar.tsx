@@ -3,10 +3,12 @@ import DesktopNav from "./DesktopNav";
 import AuthButtons from "./AuthButtons";
 import Logo from "./Logo";
 import Container from "@/components/custom/Container";
+import { getNavUser } from "@/service/user/user.actions";
 
-export default function Navbar() {
-  const isLoggedIn = false;
+export default async function Navbar() {
+  const res = await getNavUser();
 
+  const user = res || null;
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
       <Container>
@@ -19,10 +21,10 @@ export default function Navbar() {
 
           <div className="flex items-center gap-3">
             <div className="hidden md:flex items-center gap-3">
-              <AuthButtons isLoggedIn={isLoggedIn} />
+              <AuthButtons isLoggedIn={!!user} user={user} />
             </div>
 
-            <MobileNav isLoggedIn={isLoggedIn} />
+            <MobileNav isLoggedIn={!!user} user={user} />
           </div>
         </div>
       </Container>

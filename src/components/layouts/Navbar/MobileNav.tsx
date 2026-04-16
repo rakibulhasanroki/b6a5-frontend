@@ -6,7 +6,13 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AuthButtons from "./AuthButtons";
 
-export default function MobileNav({ isLoggedIn }: { isLoggedIn: boolean }) {
+export default function MobileNav({
+  isLoggedIn,
+  user,
+}: {
+  isLoggedIn: boolean;
+  user: any;
+}) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -39,13 +45,13 @@ export default function MobileNav({ isLoggedIn }: { isLoggedIn: boolean }) {
 
       {open && (
         <div className="absolute left-0 top-16 w-full border-t border-border bg-background shadow-md">
-          <div className="flex flex-col p-6">
+          <div className="flex flex-col p-5">
             {/* Links */}
             <div className="flex flex-col gap-1">
               <Link
                 href="/"
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                className="flex items-center rounded-lg px-4 py-2.5 text-[15px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200"
               >
                 Home
               </Link>
@@ -53,25 +59,23 @@ export default function MobileNav({ isLoggedIn }: { isLoggedIn: boolean }) {
               <Link
                 href="/events"
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                className="flex items-center rounded-lg px-4 py-2.5 text-[15px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200"
               >
                 Events
               </Link>
+
               <Link
                 href="/about"
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-2 text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                className="flex items-center rounded-lg px-4 py-2.5 text-[15px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200"
               >
                 About
               </Link>
             </div>
 
-            {/* Divider */}
-            <div className="my-4 h-px bg-border" />
-
             {/* Auth */}
-            <div className="flex flex-col gap-2">
-              <AuthButtons isLoggedIn={isLoggedIn} />
+            <div className="mt-4">
+              <AuthButtons isLoggedIn={isLoggedIn} user={user} />
             </div>
           </div>
         </div>

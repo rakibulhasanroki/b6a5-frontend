@@ -18,9 +18,7 @@ export const profileSchema = z.object({
         // Length check
         if (val.length < 11 || val.length > 14) return false;
 
-        // 01XXXXXXXXX
-        // 8801XXXXXXXXX
-        // +8801XXXXXXXXX
+        // Validity check
         const bdRegex = /^(?:\+8801|8801|01)[3-9]\d{8}$/;
 
         if (!bdRegex.test(val)) return false;
@@ -79,73 +77,80 @@ export default function ProfileForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* IMAGE */}
-      <div className="flex items-center gap-4">
-        <div className="h-20 w-20 rounded-full overflow-hidden border shadow-sm">
-          <img
-            src={
-              imageFile
-                ? URL.createObjectURL(imageFile)
-                : user?.image || "/avatar.png"
-            }
-            className="h-full w-full object-cover"
-          />
+    <form onSubmit={handleSubmit} className="flex flex-col h-full">
+      <div className="flex flex-col gap-6 flex-1">
+        {/* IMAGE */}
+        <div className="flex items-center gap-4">
+          <div className="h-20 w-20 rounded-full overflow-hidden border">
+            <img
+              src={
+                imageFile
+                  ? URL.createObjectURL(imageFile)
+                  : user?.image || "/avatar.png"
+              }
+              className="h-full w-full object-cover"
+            />
+          </div>
+
+          <label className="cursor-pointer text-sm border px-3 py-2 rounded-md hover:bg-muted transition">
+            Change Photo
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+            />
+          </label>
         </div>
 
-        <label className="cursor-pointer text-sm border px-3 py-2 rounded-md hover:bg-muted transition">
-          Change Photo
-          <input
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-          />
-        </label>
+        {/* INPUTS */}
+        <div className="space-y-4">
+          <div>
+            <Input
+              placeholder="Full Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+            {errors?.name && (
+              <p className="text-xs text-red-500">{errors.name[0]}</p>
+            )}
+          </div>
+
+          <div>
+            <Input
+              placeholder="Phone Number"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+            />
+            {errors?.phoneNumber && (
+              <p className="text-xs text-red-500">{errors.phoneNumber[0]}</p>
+            )}
+          </div>
+
+          <div>
+            <textarea
+              placeholder="Write something about yourself..."
+              className="w-full min-h-[120px] rounded-md border p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+            />
+            {errors?.bio && (
+              <p className="text-xs text-red-500">{errors.bio[0]}</p>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* NAME */}
-      <div className="space-y-1">
-        <Input
-          placeholder="Full Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        {errors?.name && (
-          <p className="text-xs text-red-500">{errors.name[0]}</p>
-        )}
+      {/* BUTTON STAYS AT BOTTOM */}
+      <div className="pt-4">
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="w-full cursor-pointer"
+        >
+          {isLoading ? "Updating..." : "Update Profile"}
+        </Button>
       </div>
-
-      {/* PHONE */}
-      <div className="space-y-1">
-        <Input
-          placeholder="Phone Number"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-        />
-        {errors?.phoneNumber && (
-          <p className="text-xs text-red-500">{errors.phoneNumber[0]}</p>
-        )}
-      </div>
-
-      {/* BIO */}
-      <div className="space-y-1">
-        <textarea
-          placeholder="Write something about yourself..."
-          className="w-full rounded-md border p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-        />
-        {errors?.bio && <p className="text-xs text-red-500">{errors.bio[0]}</p>}
-      </div>
-
-      <Button
-        type="submit"
-        disabled={isLoading}
-        className="w-full cursor-pointer"
-      >
-        {isLoading ? "Updating..." : "Update Profile"}
-      </Button>
     </form>
   );
 }

@@ -8,7 +8,7 @@ export default async function ProfilePage() {
 
   return (
     <PageContainer>
-      <PageHeader title="My Profile" className="mt-14" />
+      <PageHeader title="My Profile" className="mt-6" />
 
       <ProfileView user={user.data} />
     </PageContainer>

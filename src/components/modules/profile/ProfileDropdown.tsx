@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { LogOut, User, LayoutDashboard } from "lucide-react";
 import {
@@ -9,17 +8,24 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { getMeAction } from "@/service/user/user.actions";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { logoutAction } from "@/service/auth/auth.actions";
 
-export default function ProfileDropdown() {
-  const [user, setUser] = useState<any>(null);
+export default function ProfileDropdown({ user }: { user: any }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    getMeAction().then((res) => setUser(res.data));
-  }, []);
+  const handleLogout = async () => {
+    await logoutAction();
 
-  if (!user) return null;
+    const fullPath =
+      pathname + (searchParams.toString() ? `?${searchParams}` : "");
 
+    router.push(
+      `/login?success=logout&redirectTo=${encodeURIComponent(fullPath)}`,
+    );
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -59,11 +65,17 @@ export default function ProfileDropdown() {
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          onClick={() => console.log("logout")}
+          asChild
           className="text-red-500 flex items-center gap-2 cursor-pointer"
         >
-          <LogOut className="h-4 w-4" />
-          Logout
+          <button
+            type="submit"
+            onClick={handleLogout}
+            className="flex items-center gap-2 w-full"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
