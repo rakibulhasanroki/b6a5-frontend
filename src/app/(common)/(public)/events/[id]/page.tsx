@@ -1,4 +1,4 @@
-import EventDetailsClient from "@/components/modules/events/EventdetailsClient";
+import EventDetailsClient from "@/components/modules/events/EventDetailsClient";
 import { EventService } from "@/service/event/event.service";
 
 export default async function EventDetailsPage({
@@ -8,7 +8,6 @@ export default async function EventDetailsPage({
 }) {
   const { id } = await params;
   const event = await EventService.getSingleEvent(id);
-  console.log(event);
 
   return <EventDetailsClient event={event} />;
 }
