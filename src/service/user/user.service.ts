@@ -17,3 +17,11 @@ export const updateMeService = async (formData: FormData) => {
     auth: true,
   });
 };
+
+export const getUserStatsService = async () => {
+  return fetcher<any>("/users/stats", {
+    method: "GET",
+    auth: true,
+    cache: "no-store",
+  });
+};

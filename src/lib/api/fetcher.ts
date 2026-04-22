@@ -58,7 +58,6 @@ export async function fetcher<TResponse, TBody = unknown>(
   });
 
   let data: any;
-
   try {
     data = await res.json();
   } catch {

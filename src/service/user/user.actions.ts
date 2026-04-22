@@ -1,7 +1,11 @@
 "use server";
 
 import { updateTag } from "next/cache";
-import { getMeService, updateMeService } from "./user.service";
+import {
+  getMeService,
+  getUserStatsService,
+  updateMeService,
+} from "./user.service";
 
 export const updateMeAction = async (formData: FormData) => {
   const res = await updateMeService(formData);
@@ -14,6 +18,15 @@ export const getNavUser = async () => {
   try {
     const res = await getMeService();
 
+    return res.data;
+  } catch {
+    return null;
+  }
+};
+
+export const getUserStatsAction = async () => {
+  try {
+    const res = await getUserStatsService();
     return res.data;
   } catch {
     return null;

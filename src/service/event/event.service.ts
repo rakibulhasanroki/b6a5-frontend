@@ -28,14 +28,16 @@ export const EventService = {
       revalidate: options?.revalidate,
       tags: options?.tags ?? ["events"],
     }),
-  getSingleEvent: async (id: string) => {
+  getSingleEvent: async (eventId: string, options?: { auth?: boolean }) => {
     const res = await fetcher<{
       success: boolean;
       message: string;
       data: Event;
-    }>(`/events/${id}`, {
+    }>(`/events/${eventId}`, {
       cache: "force-cache",
-      tags: [`event-${id}`],
+      auth: options?.auth ?? false,
+      tags: [`event-${eventId}`],
+      revalidate: 60,
     });
 
     return res.data;
@@ -59,5 +61,34 @@ export const EventService = {
     fetcher(`/events/${id}`, {
       method: "DELETE",
       auth: true,
+    }),
+
+  getMyEvents: (query?: { page?: number; limit?: number }) =>
+    fetcher<{ data: PaginatedResponse<Event> }>("/events/my", {
+      query,
+      auth: true,
+      cache: "force-cache",
+      tags: ["my-events"],
+      revalidate: 60,
+    }),
+
+  getJoinedEvents: (query?: { page?: number; limit?: number }) =>
+    fetcher<{ data: PaginatedResponse<Event> }>("/events/joined", {
+      query,
+      auth: true,
+      cache: "force-cache",
+      tags: ["joined-events"],
+      revalidate: 60,
+    }),
+
+  getEventRequests: (eventId: string) =>
+    fetcher(`/events/${eventId}/requests`, {
+      auth: true,
+    }),
+
+  getAllParticipants: () =>
+    fetcher("/events/participants/all", {
+      auth: true,
+      cache: "no-store",
     }),
 };

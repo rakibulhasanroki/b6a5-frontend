@@ -22,6 +22,7 @@ export interface Event {
     id: string;
     name: string;
   };
+  isParticipant?: boolean;
 
   createdAt?: string;
   updatedAt?: string;
