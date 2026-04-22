@@ -1,11 +1,11 @@
-import React from "react";
+import DashboardLayout from "@/components/layouts/Dashboard/DashboardLayout";
+import { getNavUser } from "@/service/user/user.actions";
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="flex">
-      <main className="flex-1">{children}</main>
-    </div>
-  );
-};
-
-export default DashboardLayout;
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const user = await getNavUser();
+  return <DashboardLayout user={user}>{children}</DashboardLayout>;
+}

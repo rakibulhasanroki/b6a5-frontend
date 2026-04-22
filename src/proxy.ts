@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const protectedRoutes = ["/profile"];
-
 export default async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
@@ -9,11 +7,7 @@ export default async function proxy(request: NextRequest) {
 
   const isAuthenticated = !!session;
 
-  const isProtected = protectedRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route),
-  );
-
-  if (isProtected && !isAuthenticated) {
+  if (!isAuthenticated) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirectTo", pathname + search);
 
@@ -24,5 +18,5 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile", "/profile/:path*"],
+  matcher: ["/profile", "/profile/:path*", "/dashboard", "/dashboard/:path*"],
 };
