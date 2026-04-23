@@ -1,19 +1,27 @@
 "use server";
 
+import { BookingWithEvent, BookingWithUser } from "@/types/booking";
 import { BookingService } from "./booking.service";
 import { updateTag } from "next/cache";
 
 // READ
-export const getMyBookingsAction = async () => {
-  return await BookingService.getMyBookings();
+export const getMyBookingsAction = async (): Promise<BookingWithEvent[]> => {
+  const res = await BookingService.getMyBookings();
+  return res.data;
 };
 
-export const getBookingByIdAction = async (bookingId: string) => {
-  return await BookingService.getBookingById(bookingId);
+export const getBookingByIdAction = async (
+  bookingId: string,
+): Promise<BookingWithEvent> => {
+  const res = await BookingService.getBookingById(bookingId);
+  return res.data;
 };
 
-export const getEventBookingsAction = async (eventId: string) => {
-  return await BookingService.getEventBookings(eventId);
+export const getEventBookingsAction = async (
+  eventId: string,
+): Promise<BookingWithUser[]> => {
+  const res = await BookingService.getEventBookings(eventId);
+  return res.data;
 };
 
 // WRITE
@@ -29,7 +37,6 @@ export const createBookingAction = async (body: {
   updateTag(`event-bookings-${body.eventId}`);
   updateTag(`event-${body.eventId}`);
 
-  // only needed extra
   updateTag("my-invitations");
   updateTag(`event-invitations-${body.eventId}`);
 

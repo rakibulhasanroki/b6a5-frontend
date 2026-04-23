@@ -2,7 +2,12 @@
 
 import { PaginatedResponse } from "@/types/api";
 import { EventService } from "./event.service";
-import { Event } from "@/types/event";
+import {
+  AllParticipant,
+  BookingRequest,
+  CreateEventPayload,
+  Event,
+} from "@/types/event";
 import { updateTag } from "next/cache";
 
 export const getEventsAction = async (
@@ -14,7 +19,10 @@ export const getEventsAction = async (
   },
 ): Promise<PaginatedResponse<Event>> => {
   const res = await EventService.getEvents(query, options);
-  return res.data;
+  return {
+    meta: res.data.meta,
+    data: res.data.data,
+  };
 };
 
 export const getMyEventsAction = async (query?: any) => {
@@ -29,11 +37,14 @@ export const getEventDetailsAction = async (
   return await EventService.getSingleEvent(eventId, options);
 };
 
-export const getEventRequestsAction = async (id: string) => {
-  return await EventService.getEventRequests(id);
+export const getEventRequestsAction = async (
+  id: string,
+): Promise<BookingRequest[]> => {
+  const res = await EventService.getEventRequests(id);
+  return res.data;
 };
 
-export const createEventAction = async (body: any) => {
+export const createEventAction = async (body: CreateEventPayload) => {
   const res = await EventService.createEvent(body);
 
   updateTag("my-events");
@@ -45,6 +56,7 @@ export const createEventAction = async (body: any) => {
 export const updateEventAction = async (id: string, body: any) => {
   const res = await EventService.updateEvent(id, body);
 
+  updateTag("events");
   updateTag("my-events");
   updateTag(`event-${id}`);
 
@@ -71,8 +83,7 @@ export const getJoinedEventsAction = async (query?: any) => {
   return res.data;
 };
 
-export const getAllParticipantsAction = async () => {
+export const getAllParticipantsAction = async (): Promise<AllParticipant[]> => {
   const res = await EventService.getAllParticipants();
-
-  return res;
+  return res.data;
 };

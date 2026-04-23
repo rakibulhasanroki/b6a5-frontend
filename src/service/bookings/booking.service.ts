@@ -1,7 +1,8 @@
 import { fetcher } from "@/lib/api/fetcher";
+import { ApiResponse } from "@/types/api";
+import { Booking, BookingWithEvent, BookingWithUser } from "@/types/booking";
 
 export const BookingService = {
-  // ❌ DO NOT CACHE (mutation)
   createBooking: (body: { eventId: string; invitationId?: string }) =>
     fetcher("/bookings", {
       method: "POST",
@@ -9,23 +10,20 @@ export const BookingService = {
       auth: true,
     }),
 
-  // ✅ SAFE TO CACHE (user list, slightly stale is fine)
   getMyBookings: () =>
-    fetcher("/bookings/my", {
+    fetcher<ApiResponse<BookingWithEvent[]>>("/bookings/my", {
       auth: true,
       cache: "force-cache",
       revalidate: 30,
       tags: ["my-bookings"],
     }),
 
-  // ❌ DO NOT CACHE (detail, sensitive)
   getBookingById: (bookingId: string) =>
-    fetcher(`/bookings/${bookingId}`, {
+    fetcher<ApiResponse<BookingWithEvent>>(`/bookings/${bookingId}`, {
       auth: true,
       cache: "no-store",
     }),
 
-  // ❌ DO NOT CACHE (mutation)
   updateBookingStatus: (bookingId: string, body: { status: string }) =>
     fetcher(`/bookings/${bookingId}/status`, {
       method: "PATCH",
@@ -34,7 +32,7 @@ export const BookingService = {
     }),
 
   getEventBookings: (eventId: string) =>
-    fetcher(`/bookings/event/${eventId}`, {
+    fetcher<ApiResponse<BookingWithUser[]>>(`/bookings/event/${eventId}`, {
       auth: true,
       cache: "force-cache",
       revalidate: 30,

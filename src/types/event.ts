@@ -1,3 +1,5 @@
+import { BookingStatus } from "./booking";
+
 export type EventVisibility = "PUBLIC" | "PRIVATE";
 export type EventType = "PHYSICAL" | "ONLINE";
 export type EventStatus = "UPCOMING" | "ONGOING" | "ENDED";
@@ -6,10 +8,11 @@ export interface Event {
   id: string;
   title: string;
   description: string;
-  startDateTime?: string;
-  endDateTime?: string;
+
+  startDateTime?: string | null;
+  endDateTime?: string | null;
+
   status: EventStatus;
-  maxParticipants?: number | null;
   eventType: EventType;
 
   location?: string | null;
@@ -17,18 +20,56 @@ export interface Event {
 
   visibility: EventVisibility;
   fee: number;
+  maxParticipants?: number | null;
 
   organizer: {
     id: string;
     name: string;
   };
-  isParticipant?: boolean;
 
-  createdAt?: string;
-  updatedAt?: string;
-  deletedAt?: string | null;
-  isDeleted?: boolean;
-  organizerId?: string;
+  organizerId: string;
+
+  currentParticipants?: number;
   isFull?: boolean;
   spotsLeft?: number | null;
+
+  isParticipant?: boolean;
+
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateEventPayload = {
+  title: string;
+  description: string;
+
+  startDateTime?: string | null;
+  endDateTime?: string | null;
+
+  eventType: EventType;
+
+  location?: string | null;
+  meetingLink?: string | null;
+
+  visibility: EventVisibility;
+  fee: number;
+  maxParticipants?: number | null;
+};
+
+export interface AllParticipant {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface BookingRequest {
+  id: string;
+  status: BookingStatus;
+  createdAt: string;
+
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
 }
