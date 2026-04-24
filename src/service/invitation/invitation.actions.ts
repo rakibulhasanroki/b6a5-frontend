@@ -10,7 +10,9 @@ export const getMyInvitationsAction = async () => {
 };
 
 export const getEventInvitationsAction = async (eventId: string) => {
-  return await InvitationService.getEventInvitations(eventId);
+  const res = await InvitationService.getEventInvitations(eventId);
+
+  return res.data;
 };
 
 export const sendInvitationAction = async (body: {

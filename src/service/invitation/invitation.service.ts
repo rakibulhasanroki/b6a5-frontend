@@ -1,4 +1,6 @@
 import { fetcher } from "@/lib/api/fetcher";
+import { ApiResponse } from "@/types/api";
+import { Invitation, InvitationWithUser } from "@/types/invitation";
 
 export const InvitationService = {
   sendInvitation: (body: { eventId: string; invitedUserId: string }) =>
@@ -9,7 +11,7 @@ export const InvitationService = {
     }),
 
   getMyInvitations: () =>
-    fetcher("/invitations/my", {
+    fetcher<ApiResponse<Invitation[]>>("/invitations/my", {
       auth: true,
       cache: "force-cache",
       tags: ["my-invitations"],
@@ -17,12 +19,15 @@ export const InvitationService = {
     }),
 
   getEventInvitations: (eventId: string) =>
-    fetcher(`/invitations/event/${eventId}`, {
-      auth: true,
-      cache: "force-cache",
-      tags: [`event-invitations-${eventId}`],
-      revalidate: 60,
-    }),
+    fetcher<ApiResponse<InvitationWithUser[]>>(
+      `/invitations/event/${eventId}`,
+      {
+        auth: true,
+        cache: "force-cache",
+        tags: [`event-invitations-${eventId}`],
+        revalidate: 60,
+      },
+    ),
 
   updateInvitationStatus: (invitationId: string, body: { status: string }) =>
     fetcher(`/invitations/${invitationId}`, {
