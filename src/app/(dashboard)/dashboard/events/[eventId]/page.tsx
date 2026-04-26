@@ -13,7 +13,12 @@ import {
 import { getEventInvitationsAction } from "@/service/invitation/invitation.actions";
 
 import { getMeService } from "@/service/user/user.service";
-import { Event } from "@/types/event";
+import { BookingRequest, Event } from "@/types/event";
+import { BookingWithUser } from "@/types/booking";
+import { InvitationWithUser } from "@/types/invitation";
+import { EventReviewsResponse } from "@/types/review";
+import { getEventReviewsAction } from "@/service/review/review.actions";
+import EventParticipantReview from "@/components/modules/dashboard/events/details/EventParticipantReview";
 
 export default async function EventDetailsPage({ params }: any) {
   const { eventId } = await params;
@@ -29,9 +34,10 @@ export default async function EventDetailsPage({ params }: any) {
     redirect("/dashboard/events");
   }
 
-  let participants: any = { data: [] };
-  let requests: any = { data: [] };
-  let invitations: any = { data: [] };
+  let participants: BookingWithUser[] = [];
+  let requests: BookingRequest[] = [];
+  let invitations: InvitationWithUser[] = [];
+  let reviews: EventReviewsResponse | null = null;
 
   if (isOrganizer) {
     participants = await getEventBookingsAction(eventId);
@@ -40,6 +46,7 @@ export default async function EventDetailsPage({ params }: any) {
       requests = await getEventRequestsAction(eventId);
       invitations = await getEventInvitationsAction(eventId);
     }
+    reviews = await getEventReviewsAction(eventId, { page: 1, limit: 5 });
   }
 
   return (
@@ -48,7 +55,7 @@ export default async function EventDetailsPage({ params }: any) {
 
       {isOrganizer && (
         <EventStatsBar
-          participantsCount={participants.data.length}
+          participantsCount={participants.length}
           requestsCount={requests.length}
         />
       )}
@@ -57,9 +64,10 @@ export default async function EventDetailsPage({ params }: any) {
         {isOrganizer && (
           <div className="lg:col-span-2">
             <EventDetailsTabs
-              participants={participants.data}
+              participants={participants}
               requests={requests}
-              invitations={invitations.data}
+              invitations={invitations}
+              reviews={reviews}
               eventId={eventId}
               eventStatus={event.status}
               isPrivate={event.visibility === "PRIVATE"}
@@ -67,7 +75,23 @@ export default async function EventDetailsPage({ params }: any) {
           </div>
         )}
 
-        <div className={isOrganizer ? "" : "lg:col-span-3"}>
+        {/* ✅ NON-ORGANIZER LAYOUT */}
+        {!isOrganizer && event.isParticipant && (
+          <div className="lg:col-span-2">
+            <EventParticipantReview eventId={eventId} />
+          </div>
+        )}
+
+        {/* ✅ Event Info */}
+        <div
+          className={
+            isOrganizer
+              ? ""
+              : event.isParticipant
+                ? "lg:col-span-1"
+                : "lg:col-span-3"
+          }
+        >
           <EventInfoCard event={event} isOrganizer={isOrganizer} />
         </div>
       </div>

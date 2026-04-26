@@ -4,11 +4,11 @@ import AuthButtons from "./AuthButtons";
 import Logo from "./Logo";
 import Container from "@/components/custom/Container";
 import { getNavUser } from "@/service/user/user.actions";
+import { IUser } from "@/types/user";
 
 export default async function Navbar() {
-  const res = await getNavUser();
+  const user: IUser | null = await getNavUser();
 
-  const user = res || null;
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur">
       <Container>

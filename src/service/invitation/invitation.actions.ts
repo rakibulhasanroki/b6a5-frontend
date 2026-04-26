@@ -19,23 +19,43 @@ export const sendInvitationAction = async (body: {
   eventId: string;
   invitedUserId: string;
 }) => {
-  const res = await InvitationService.sendInvitation(body);
+  try {
+    const res = await InvitationService.sendInvitation(body);
 
-  updateTag(`event-invitations-${body.eventId}`);
+    updateTag(`event-invitations-${body.eventId}`);
 
-  return res;
+    return {
+      success: true,
+      data: res,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error?.message || "Failed to send invitation",
+    };
+  }
 };
 
 export const updateInvitationStatusAction = async (
   invitationId: string,
   body: { status: string },
 ) => {
-  const res = await InvitationService.updateInvitationStatus(
-    invitationId,
-    body,
-  );
+  try {
+    const res = await InvitationService.updateInvitationStatus(
+      invitationId,
+      body,
+    );
 
-  updateTag("my-invitations");
+    updateTag("my-invitations");
 
-  return res;
+    return {
+      success: true,
+      data: res,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error?.message || "Failed to update invitation",
+    };
+  }
 };

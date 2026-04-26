@@ -62,11 +62,20 @@ export default function OrganizerPaymentsList({
                   <p className="text-sm font-medium">৳ {p.amount}</p>
 
                   {p.invoiceUrl && (
-                    <a href={p.invoiceUrl} target="_blank">
-                      <Button size="sm" variant="outline">
+                    <Button
+                      asChild
+                      size="sm"
+                      variant="outline"
+                      className="cursor-pointer"
+                    >
+                      <a
+                        href={p.invoiceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         Invoice
-                      </Button>
-                    </a>
+                      </a>
+                    </Button>
                   )}
                 </div>
               </div>

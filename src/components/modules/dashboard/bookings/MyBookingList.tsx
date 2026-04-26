@@ -20,19 +20,23 @@ export default function MyBookingsList({
   const handleCancel = async (booking: BookingWithEvent) => {
     if (activeId === booking.id) return;
 
-    try {
-      setActiveId(booking.id);
+    setActiveId(booking.id);
 
-      await updateBookingStatusAction(booking.id, "CANCELLED", booking.eventId);
+    const res = await updateBookingStatusAction(
+      booking.id,
+      "CANCELLED",
+      booking.eventId,
+    );
 
-      toast.success("Booking cancelled");
-
-      router.refresh();
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to cancel booking");
-    } finally {
+    if (!res?.success) {
+      toast.error(res?.message || "Failed to cancel booking");
       setActiveId(null);
+      return;
     }
+
+    toast.success("Booking cancelled");
+    router.refresh();
+    setActiveId(null);
   };
 
   const getStatusStyle = (status: string) => {
@@ -93,15 +97,16 @@ export default function MyBookingsList({
 
             {/* RIGHT */}
             <div className="flex items-center gap-2">
-              <Link href={`/dashboard/my-bookings/${booking.id}`}>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="min-w-[90px] cursor-pointer"
-                >
+              <Button
+                asChild
+                size="sm"
+                variant="outline"
+                className="min-w-[90px] cursor-pointer"
+              >
+                <Link href={`/dashboard/my-bookings/${booking.id}`}>
                   Details
-                </Button>
-              </Link>
+                </Link>
+              </Button>
 
               {booking.status !== "CANCELLED" && (
                 <Button

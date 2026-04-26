@@ -1,5 +1,5 @@
 import { EventService } from "@/service/event/event.service";
-import UpcomingEventsClient from "./UpcommingEventsClient";
+import UpcomingEventsClient from "./UpcomingEventsClient";
 
 export default async function UpcomingEvents() {
   const res = await EventService.getEvents(

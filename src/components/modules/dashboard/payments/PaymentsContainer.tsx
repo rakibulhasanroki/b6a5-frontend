@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import MyPaymentsList from "./MyPaymentsList";
 import OrganizerPaymentsList from "./OrganizerPaymentsList";
+import PaymentToastHandler from "./PaymentToastHandler";
 
 export default function PaymentsContainer({
   initialMyPayments,
@@ -12,11 +13,14 @@ export default function PaymentsContainer({
 
   return (
     <div className="space-y-6">
+      <Suspense fallback={null}>
+        <PaymentToastHandler />
+      </Suspense>
       {/* TABS */}
       <div className="flex gap-2 border-b pb-2">
         <button
           onClick={() => setTab("my")}
-          className={`px-3 py-1 text-sm rounded-md ${
+          className={`px-3 py-1 text-sm rounded-md cursor-pointer ${
             tab === "my" ? "bg-primary text-white" : "text-muted-foreground"
           }`}
         >
@@ -25,7 +29,7 @@ export default function PaymentsContainer({
 
         <button
           onClick={() => setTab("organizer")}
-          className={`px-3 py-1 text-sm rounded-md ${
+          className={`px-3 py-1 text-sm rounded-md cursor-pointer ${
             tab === "organizer"
               ? "bg-primary text-white"
               : "text-muted-foreground"
@@ -34,8 +38,6 @@ export default function PaymentsContainer({
           Organizer
         </button>
       </div>
-
-      {/* CONTENT */}
       {tab === "my" ? (
         <MyPaymentsList initialData={initialMyPayments} />
       ) : (

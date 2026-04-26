@@ -13,11 +13,12 @@ export default function DashboardEventsHeader() {
         </p>
       </div>
 
-      <Link href="/dashboard/events/create">
-        <Button className="h-9 px-4 hover:bg-primary/90 hover:text-white cursor-pointer">
-          Create Event
-        </Button>
-      </Link>
+      <Button
+        asChild
+        className="h-9 px-4 hover:bg-primary/90 hover:text-white cursor-pointer"
+      >
+        <Link href="/dashboard/events/create">Create Event</Link>
+      </Button>
     </div>
   );
 }

@@ -4,15 +4,31 @@ import { useState } from "react";
 import ParticipantsList from "./ParticipantsList";
 import RequestsList from "./RequestList";
 import InvitationsList from "./InvitationList";
+import { BookingWithUser } from "@/types/booking";
+import { BookingRequest } from "@/types/event";
+import { InvitationWithUser } from "@/types/invitation";
+import { EventReviewsResponse } from "@/types/review";
+import ReviewsList from "./ReviewsList";
+
+type Props = {
+  participants: BookingWithUser[];
+  requests: BookingRequest[];
+  invitations: InvitationWithUser[];
+  reviews: EventReviewsResponse | null;
+  eventId: string;
+  eventStatus: string;
+  isPrivate: boolean;
+};
 
 export default function EventDetailsTabs({
   participants,
   requests,
   invitations,
+  reviews,
   eventId,
   eventStatus,
   isPrivate,
-}: any) {
+}: Props) {
   const [active, setActive] = useState("participants");
 
   return (
@@ -31,6 +47,9 @@ export default function EventDetailsTabs({
 
         <Tab value="invitations" active={active} setActive={setActive}>
           Invitations
+        </Tab>
+        <Tab value="reviews" active={active} setActive={setActive}>
+          Reviews
         </Tab>
       </div>
 
@@ -57,6 +76,9 @@ export default function EventDetailsTabs({
           eventId={eventId}
           eventStatus={eventStatus}
         />
+      )}
+      {active === "reviews" && (
+        <ReviewsList initialData={reviews} eventId={eventId} />
       )}
     </div>
   );

@@ -3,6 +3,8 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProfileDropdown from "@/components/modules/profile/ProfileDropdown";
+import { IUser } from "@/types/user";
+import { Suspense } from "react";
 
 export default function DashboardTopBar({
   open,
@@ -13,7 +15,7 @@ export default function DashboardTopBar({
   setCollapsed: (v: boolean) => void;
   open: boolean;
   setOpen: (v: boolean) => void;
-  user: any;
+  user: IUser;
 }) {
   return (
     <header className="h-14 border-b border-border flex items-center justify-between px-4">
@@ -32,7 +34,9 @@ export default function DashboardTopBar({
       </div>
 
       {/* Right */}
-      <ProfileDropdown user={user} />
+      <Suspense fallback={null}>
+        <ProfileDropdown user={user} />
+      </Suspense>
     </header>
   );
 }

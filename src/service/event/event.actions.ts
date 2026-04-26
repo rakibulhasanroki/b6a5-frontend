@@ -45,38 +45,68 @@ export const getEventRequestsAction = async (
 };
 
 export const createEventAction = async (body: CreateEventPayload) => {
-  const res = await EventService.createEvent(body);
+  try {
+    const res = await EventService.createEvent(body);
 
-  updateTag("my-events");
-  updateTag("events");
-  updateTag("joined-events");
-  return res;
+    updateTag("my-events");
+    updateTag("events");
+    updateTag("joined-events");
+
+    return {
+      success: true,
+      data: res,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Failed to create event",
+    };
+  }
 };
 
 export const updateEventAction = async (id: string, body: any) => {
-  const res = await EventService.updateEvent(id, body);
+  try {
+    const res = await EventService.updateEvent(id, body);
 
-  updateTag("events");
-  updateTag("my-events");
-  updateTag(`event-${id}`);
+    updateTag("events");
+    updateTag("my-events");
+    updateTag(`event-${id}`);
+    updateTag(`event-bookings-${id}`);
+    updateTag("joined-events");
 
-  updateTag(`event-bookings-${id}`);
-  updateTag("joined-events");
-
-  return res;
+    return {
+      success: true,
+      data: res,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Failed to update event",
+    };
+  }
 };
 
 export const deleteEventAction = async (id: string) => {
-  const res = await EventService.deleteEvent(id);
-  updateTag("events");
+  try {
+    const res = await EventService.deleteEvent(id);
+    updateTag("events");
 
-  updateTag("my-events");
+    updateTag("my-events");
 
-  updateTag(`event-${id}`);
-  updateTag(`event-bookings-${id}`);
-  updateTag("joined-events");
+    updateTag(`event-${id}`);
+    updateTag(`event-bookings-${id}`);
+    updateTag("joined-events");
 
-  return res;
+    return {
+      success: true,
+      data: res,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Failed to delete event",
+    };
+  }
 };
 export const getJoinedEventsAction = async (query?: any) => {
   const res = await EventService.getJoinedEvents(query);

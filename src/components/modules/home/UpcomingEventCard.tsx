@@ -3,8 +3,8 @@ import { Event } from "@/types/event";
 import { MapPin } from "lucide-react";
 import Link from "next/link";
 
-function formatDate(date?: string) {
-  if (!date) return "";
+function formatDate(date?: string | null) {
+  if (!date) return "N/A";
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",

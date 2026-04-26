@@ -1,4 +1,4 @@
-import { CTA, Grid, StatCard } from "@/components/shared/DahsboardSahred";
+import { CTA, Grid, StatCard } from "@/components/shared/DashboardShared";
 
 export default function ParticipantStats({ stats }: { stats: any }) {
   const data = stats.participant;

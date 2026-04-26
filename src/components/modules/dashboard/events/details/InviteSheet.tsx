@@ -33,7 +33,7 @@ export default function InviteSheet({
       const res = await getAllParticipantsAction();
       setUsers(res || []);
     } catch (err: any) {
-      toast.error(err.message || "Failed to load users");
+      toast.error(err?.message || "Failed to load users");
     }
   };
 
@@ -47,20 +47,21 @@ export default function InviteSheet({
       return;
     }
 
-    try {
-      setLoadingUserId(userId);
+    setLoadingUserId(userId);
 
-      await sendInvitationAction({
-        eventId,
-        invitedUserId: userId,
-      });
+    const res = await sendInvitationAction({
+      eventId,
+      invitedUserId: userId,
+    });
 
-      toast.success("Invitation sent");
-    } catch (err: any) {
-      toast.error(err.message || "Failed to send invitation");
-    } finally {
+    if (!res?.success) {
+      toast.error(res?.message || "Failed to send invitation");
       setLoadingUserId(null);
+      return;
     }
+
+    toast.success("Invitation sent");
+    setLoadingUserId(null);
   };
 
   const filteredUsers = users.filter((u) =>

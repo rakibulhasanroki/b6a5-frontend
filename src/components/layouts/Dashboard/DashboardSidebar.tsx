@@ -5,6 +5,7 @@ import { Home, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NAV_ITEMS } from "@/lib/utils/dashboard-nav";
 import Link from "next/link";
+import { IUser } from "@/types/user";
 
 export default function DashboardSidebar({
   collapsed,
@@ -13,7 +14,7 @@ export default function DashboardSidebar({
 }: {
   collapsed: boolean;
   setCollapsed: (v: boolean) => void;
-  user: any;
+  user: IUser;
 }) {
   return (
     <aside

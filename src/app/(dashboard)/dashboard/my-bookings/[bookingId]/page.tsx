@@ -1,7 +1,9 @@
 import { getBookingByIdAction } from "@/service/bookings/booking.actions";
 import { redirect } from "next/navigation";
+import { BookingWithEvent } from "@/types/booking";
+import { EventStatus } from "@/types/event";
 
-const formatDate = (date?: string) => {
+const formatDate = (date?: string | null) => {
   if (!date) return "N/A";
 
   return new Intl.DateTimeFormat("en-BD", {
@@ -30,9 +32,9 @@ const getStatusStyle = (status: string) => {
 };
 
 const getComputedStatus = (
-  start?: string,
-  end?: string,
-): "UPCOMING" | "ONGOING" | "ENDED" => {
+  start?: string | null,
+  end?: string | null,
+): EventStatus => {
   const now = new Date();
 
   if (end && now > new Date(end)) return "ENDED";
@@ -40,7 +42,7 @@ const getComputedStatus = (
   return "UPCOMING";
 };
 
-const getEventStatusStyle = (status: string) => {
+const getEventStatusStyle = (status: EventStatus) => {
   switch (status) {
     case "UPCOMING":
       return "bg-blue-100 text-blue-700";
@@ -53,26 +55,27 @@ const getEventStatusStyle = (status: string) => {
   }
 };
 
-export default async function BookingDetailsPage({ params }: any) {
+export default async function BookingDetailsPage({
+  params,
+}: {
+  params: { bookingId: string };
+}) {
   const { bookingId } = await params;
 
-  let booking: any;
-  let event: any;
+  let booking: BookingWithEvent | null = null;
 
   try {
-    const res: any = await getBookingByIdAction(bookingId);
+    const res = await getBookingByIdAction(bookingId);
+    booking = res ?? null;
 
-    booking = res?.data;
-    event = booking?.event;
-
-    if (!booking || !event) {
+    if (!booking?.event) {
       redirect("/dashboard/my-bookings");
     }
   } catch {
     redirect("/dashboard/my-bookings");
   }
 
-  if (!booking || !event) {
+  if (!booking || !booking.event) {
     return (
       <div className="space-y-6">
         <h1 className="text-xl font-semibold">Booking Details</h1>
@@ -81,17 +84,20 @@ export default async function BookingDetailsPage({ params }: any) {
     );
   }
 
+  const event = booking.event;
+  const computedStatus = getComputedStatus(
+    event.startDateTime,
+    event.endDateTime,
+  );
+
   return (
     <div className="max-w-3xl space-y-6">
-      {/* HEADER */}
       <div className="space-y-1">
         <h1 className="text-xl font-semibold">{event.title}</h1>
         <p className="text-sm text-muted-foreground">Booking Details</p>
       </div>
 
-      {/* CONTENT */}
       <div className="border rounded-lg divide-y">
-        {/* STATUS */}
         <div className="flex items-center justify-between p-4">
           <span className="text-sm text-muted-foreground">Booking Status</span>
           <span
@@ -103,28 +109,17 @@ export default async function BookingDetailsPage({ params }: any) {
           </span>
         </div>
 
-        {/* EVENT STATUS */}
         <div className="flex items-center justify-between p-4">
           <span className="text-sm text-muted-foreground">Event Status</span>
-          {(() => {
-            const computedStatus = getComputedStatus(
-              event.startDateTime,
-              event.endDateTime,
-            );
-
-            return (
-              <span
-                className={`text-xs px-3 py-1 rounded-full font-medium ${getEventStatusStyle(
-                  computedStatus,
-                )}`}
-              >
-                {computedStatus}
-              </span>
-            );
-          })()}
+          <span
+            className={`text-xs px-3 py-1 rounded-full font-medium ${getEventStatusStyle(
+              computedStatus,
+            )}`}
+          >
+            {computedStatus}
+          </span>
         </div>
 
-        {/* START */}
         <div className="flex items-center justify-between p-4">
           <span className="text-sm text-muted-foreground">Start</span>
           <span className="text-sm font-medium text-right">
@@ -132,7 +127,6 @@ export default async function BookingDetailsPage({ params }: any) {
           </span>
         </div>
 
-        {/* END */}
         {event.endDateTime && (
           <div className="flex items-center justify-between p-4">
             <span className="text-sm text-muted-foreground">End</span>
@@ -142,19 +136,16 @@ export default async function BookingDetailsPage({ params }: any) {
           </div>
         )}
 
-        {/* TYPE */}
         <div className="flex items-center justify-between p-4">
           <span className="text-sm text-muted-foreground">Type</span>
           <span className="text-sm font-medium">{event.eventType}</span>
         </div>
 
-        {/* VISIBILITY */}
         <div className="flex items-center justify-between p-4">
           <span className="text-sm text-muted-foreground">Visibility</span>
           <span className="text-sm font-medium">{event.visibility}</span>
         </div>
 
-        {/* LOCATION / MEETING */}
         {event.location && (
           <div className="flex items-center justify-between p-4">
             <span className="text-sm text-muted-foreground">Location</span>
@@ -177,7 +168,6 @@ export default async function BookingDetailsPage({ params }: any) {
           </div>
         )}
 
-        {/* ORGANIZER */}
         {event.organizer && (
           <div className="flex items-center justify-between p-4">
             <span className="text-sm text-muted-foreground">Organizer</span>
@@ -185,7 +175,6 @@ export default async function BookingDetailsPage({ params }: any) {
           </div>
         )}
 
-        {/* FEE */}
         <div className="flex items-center justify-between p-4">
           <span className="text-sm text-muted-foreground">Fee</span>
           <span className="text-sm font-medium">
@@ -193,7 +182,6 @@ export default async function BookingDetailsPage({ params }: any) {
           </span>
         </div>
 
-        {/* PAYMENT */}
         {booking.payment && (
           <div className="flex items-center justify-between p-4">
             <span className="text-sm text-muted-foreground">Payment</span>

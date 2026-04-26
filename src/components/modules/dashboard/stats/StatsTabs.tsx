@@ -20,7 +20,7 @@ export default function StatsTabs({ stats }: { stats: any }) {
           active={tab === "participant"}
           onClick={() => setTab("participant")}
         >
-          Activity
+          My Activity
         </TabButton>
 
         <TabButton
@@ -58,9 +58,7 @@ function TabButton({
     <button
       onClick={onClick}
       className={`px-4 py-1.5 rounded-md text-sm whitespace-nowrap cursor-pointer ${
-        active
-          ? "bg-primary text-white"
-          : "bg-muted text-muted-foreground cursor-pointer"
+        active ? "bg-primary text-white" : "bg-muted text-muted-foreground "
       }`}
     >
       {children}

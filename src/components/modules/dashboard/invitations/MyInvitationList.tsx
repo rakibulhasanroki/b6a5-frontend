@@ -97,25 +97,40 @@ export default function MyInvitationsList({
   const handleAccept = (invitation: Invitation) => {
     setActive({ id: invitation.id, type: "accept" });
 
-    startTransition(async () => {
-      try {
-        const res: any = await createBookingAction({
-          eventId: invitation.eventId,
-          invitationId: invitation.id,
-        });
+    startTransition(() => {
+      createBookingAction({
+        eventId: invitation.eventId,
+        invitationId: invitation.id,
+      }).then((raw: any) => {
+        if (!raw?.success) {
+          toast.error(raw?.message || "Failed to join event");
+          setActive({ id: null, type: null });
+          return;
+        }
 
-        if (res?.requiresPayment && res?.paymentUrl) {
-          window.location.href = res.paymentUrl;
+        const res = raw?.data.data ?? raw;
+
+        if (res?.requiresPayment === true) {
+          if (res?.paymentUrl) {
+            toast.info("Redirecting to payment...");
+
+            setTimeout(() => {
+              window.location.href = res.paymentUrl;
+            }, 200);
+
+            setActive({ id: null, type: null });
+            return;
+          }
+
+          toast.error("Payment URL missing");
+          setActive({ id: null, type: null });
           return;
         }
 
         toast.success("Joined event successfully");
         router.refresh();
-      } catch (err: any) {
-        toast.error(err?.message || "Failed to join event");
-      } finally {
         setActive({ id: null, type: null });
-      }
+      });
     });
   };
 

@@ -5,8 +5,17 @@ import { updateBookingStatusAction } from "@/service/bookings/booking.actions";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { BookingRequest } from "@/types/event";
 
-export default function RequestsList({ requests, eventId, eventStatus }: any) {
+export default function RequestsList({
+  requests,
+  eventId,
+  eventStatus,
+}: {
+  requests: BookingRequest[];
+  eventId: string;
+  eventStatus: string;
+}) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -18,9 +27,13 @@ export default function RequestsList({ requests, eventId, eventStatus }: any) {
       return;
     }
 
-    startTransition(async () => {
-      try {
-        await updateBookingStatusAction(bookingId, status, eventId);
+    startTransition(() => {
+      updateBookingStatusAction(bookingId, status, eventId).then((res) => {
+        if (!res?.success) {
+          toast.error(res?.message || "Action failed");
+          return;
+        }
+
         router.refresh();
 
         if (status === "CONFIRMED") {
@@ -28,9 +41,7 @@ export default function RequestsList({ requests, eventId, eventStatus }: any) {
         } else {
           toast.success("User banned");
         }
-      } catch (err: any) {
-        toast.error(err.message || "Action failed");
-      }
+      });
     });
   };
 

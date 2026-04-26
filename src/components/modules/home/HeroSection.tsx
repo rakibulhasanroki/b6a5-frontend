@@ -5,7 +5,6 @@ import Link from "next/link";
 export default function HeroSection() {
   return (
     <section className="relative py-20 overflow-hidden">
-      {/* soft blended glow */}
       <div className="absolute top-[-120px] left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-primary/20 blur-[120px] rounded-full -z-10" />
 
       <Container>
@@ -19,12 +18,11 @@ export default function HeroSection() {
             in one place.
           </p>
 
-          {/* FIXED BUTTON GROUP */}
           <div className="flex gap-4 mt-4">
-            {/* Explore Button (premium) */}
-            <Link href="/events">
-              <Button
-                className="
+            {/* Explore */}
+            <Button
+              asChild
+              className="
                 px-6 h-10
                 bg-primary text-primary-foreground
                 hover:bg-primary/90
@@ -34,26 +32,24 @@ export default function HeroSection() {
                 active:scale-[0.97]
                 cursor-pointer
               "
-              >
-                Explore Events
-              </Button>
-            </Link>
+            >
+              <Link href="/events">Explore Events</Link>
+            </Button>
 
-            {/* Create Button (match size exactly) */}
-            <Link href="/dashboard/my-events">
-              <Button
-                variant="secondary"
-                className="
+            {/* Create */}
+            <Button
+              asChild
+              variant="secondary"
+              className="
                 px-6 h-10
                 hover:scale-[1.03]
                 active:scale-[0.97]
                 transition-all duration-300
                 cursor-pointer
               "
-              >
-                Create Event
-              </Button>
-            </Link>
+            >
+              <Link href="/dashboard/events/create">Create Event</Link>
+            </Button>
           </div>
         </div>
       </Container>

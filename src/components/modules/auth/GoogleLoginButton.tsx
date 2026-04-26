@@ -10,7 +10,7 @@ type Props = {
 export default function GoogleLoginButton({ className }: Props) {
   const searchParams = useSearchParams();
   const redirectTo = getSafeRedirect(searchParams.get("redirectTo"));
-  const callbackURL = `${env.NEXT_PUBLIC_API_URL}/api/v1/auth/google/callback?redirect=${encodeURIComponent(
+  const callbackURL = `${env.NEXT_PUBLIC_FRONTEND_URL}/api/v1/auth/google/callback?redirect=${encodeURIComponent(
     redirectTo,
   )}`;
 

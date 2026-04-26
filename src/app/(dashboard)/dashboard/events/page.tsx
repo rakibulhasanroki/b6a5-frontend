@@ -7,6 +7,7 @@ import {
   getMyEventsAction,
   getJoinedEventsAction,
 } from "@/service/event/event.actions";
+import { Suspense } from "react";
 
 export default async function EventsPage({
   searchParams,
@@ -24,8 +25,8 @@ export default async function EventsPage({
       ? await getJoinedEventsAction({ page, limit })
       : await getMyEventsAction({ page, limit });
 
-  const events = res?.data || [];
-  const meta = res?.meta;
+  const events = res.data;
+  const meta = res.meta;
 
   return (
     <div className="space-y-6">
@@ -36,7 +37,9 @@ export default async function EventsPage({
       {events.length > 0 ? (
         <>
           <DashboardEventsList events={events} tab={tab} />
-          <DashboardPagination meta={meta} tab={tab} />
+          <Suspense fallback={null}>
+            <DashboardPagination meta={meta} tab={tab} />
+          </Suspense>
         </>
       ) : (
         <DashboardEmptyState tab={tab} />

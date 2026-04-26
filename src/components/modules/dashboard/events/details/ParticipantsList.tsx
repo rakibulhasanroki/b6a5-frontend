@@ -5,12 +5,17 @@ import { updateBookingStatusAction } from "@/service/bookings/booking.actions";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { BookingWithUser } from "@/types/booking";
 
 export default function ParticipantsList({
   participants,
   eventId,
   eventStatus,
-}: any) {
+}: {
+  participants: BookingWithUser[];
+  eventId: string;
+  eventStatus: string;
+}) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -22,14 +27,16 @@ export default function ParticipantsList({
       return;
     }
 
-    startTransition(async () => {
-      try {
-        await updateBookingStatusAction(bookingId, "PENDING", eventId);
+    startTransition(() => {
+      updateBookingStatusAction(bookingId, "PENDING", eventId).then((res) => {
+        if (!res?.success) {
+          toast.error(res?.message || "Unban failed");
+          return;
+        }
+
         router.refresh();
         toast.success("User moved to pending");
-      } catch (err: any) {
-        toast.error(err.message || "Unban failed");
-      }
+      });
     });
   };
 

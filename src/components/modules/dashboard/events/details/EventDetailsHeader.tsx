@@ -19,25 +19,29 @@ export default function EventDetailsHeader({
   const router = useRouter();
 
   const handleDelete = () => {
-    startTransition(async () => {
-      try {
-        await deleteEventAction(event.id);
+    startTransition(() => {
+      deleteEventAction(event.id).then((res) => {
+        if (!res.success) {
+          toast.error(res.message);
+          return;
+        }
+
         toast.success("Event deleted");
         router.push("/dashboard/events");
-      } catch (err: any) {
-        toast.error(err?.message || "Failed to delete event");
-      }
+      });
     });
   };
 
-  const formattedDate = new Intl.DateTimeFormat("en-BD", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(event.startDateTime || ""));
+  const formattedDate = event.startDateTime
+    ? new Intl.DateTimeFormat("en-BD", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      }).format(new Date(event.startDateTime))
+    : "No date set";
 
   return (
     <div className="flex items-start justify-between">

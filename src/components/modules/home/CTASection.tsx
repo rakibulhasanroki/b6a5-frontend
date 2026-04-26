@@ -1,5 +1,6 @@
 import Container from "@/components/custom/Container";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function CTASection() {
   return (
@@ -18,18 +19,19 @@ export default function CTASection() {
           </p>
 
           <Button
+            asChild
             className="
-              mt-2 px-6 h-10
-              bg-primary text-primary-foreground
-              hover:bg-primary/90
-              transition-all duration-300
-              shadow-sm hover:shadow-md
-              hover:scale-[1.03]
-              active:scale-[0.97]
-              cursor-pointer
-            "
+    mt-2 px-6 h-10
+    bg-primary text-primary-foreground
+    hover:bg-primary/90
+    transition-all duration-300
+    shadow-sm hover:shadow-md
+    hover:scale-[1.03]
+    active:scale-[0.97]
+    cursor-pointer
+  "
           >
-            Create Event
+            <Link href="/dashboard/events/create">Create Event</Link>
           </Button>
         </div>
       </Container>

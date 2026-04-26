@@ -30,17 +30,28 @@ export const createBookingAction = async (body: {
   eventId: string;
   invitationId?: string;
 }) => {
-  const res = await BookingService.createBooking(body);
+  try {
+    const res = await BookingService.createBooking(body);
 
-  updateTag("my-bookings");
-  updateTag("joined-events");
-  updateTag(`event-bookings-${body.eventId}`);
-  updateTag(`event-${body.eventId}`);
+    updateTag("my-bookings");
+    updateTag("joined-events");
+    updateTag(`event-bookings-${body.eventId}`);
+    updateTag(`event-${body.eventId}`);
+    updateTag("my-payments");
+    updateTag("organizer-payments");
+    updateTag("my-invitations");
+    updateTag(`event-invitations-${body.eventId}`);
 
-  updateTag("my-invitations");
-  updateTag(`event-invitations-${body.eventId}`);
-
-  return res;
+    return {
+      success: true,
+      data: res,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Failed to create booking",
+    };
+  }
 };
 
 export const updateBookingStatusAction = async (
@@ -48,14 +59,24 @@ export const updateBookingStatusAction = async (
   status: string,
   eventId: string,
 ) => {
-  const res = await BookingService.updateBookingStatus(bookingId, {
-    status,
-  });
+  try {
+    const res = await BookingService.updateBookingStatus(bookingId, {
+      status,
+    });
 
-  updateTag("my-bookings");
-  updateTag("joined-events");
-  updateTag(`event-bookings-${eventId}`);
-  updateTag(`event-${eventId}`);
+    updateTag("my-bookings");
+    updateTag("joined-events");
+    updateTag(`event-bookings-${eventId}`);
+    updateTag(`event-${eventId}`);
 
-  return res;
+    return {
+      success: true,
+      data: res,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Failed to update booking status",
+    };
+  }
 };

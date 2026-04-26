@@ -4,35 +4,75 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getEventActionLabel } from "@/lib/utils/eventActionLabel";
+import { createBookingAction } from "@/service/bookings/booking.actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 interface Props {
   event: Event;
 }
 
-function getActionLabel(event: Event, isFull: boolean) {
-  if (event.status === "ENDED") return "Event Ended";
-  if (isFull) return "Full";
-
-  if (event.visibility === "PUBLIC" && event.fee === 0) return "Join";
-  if (event.visibility === "PUBLIC" && event.fee > 0) return "Pay & Join";
-  if (event.visibility === "PRIVATE" && event.fee === 0) return "Request";
-  if (event.visibility === "PRIVATE" && event.fee > 0) return "Pay & Request";
-
-  return "View Details";
-}
-
 export default function EventCard({ event }: Props) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   const max = event.maxParticipants;
   const isFull = event.isFull ?? false;
   const spotsLeft = event.spotsLeft ?? 0;
 
-  const actionLabel = getActionLabel(event, isFull);
+  const actionLabel = getEventActionLabel(event, isFull);
   const isDisabled = event.status === "ENDED" || isFull;
+
+  const handleJoin = async () => {
+    if (loading) return;
+
+    try {
+      setLoading(true);
+
+      const raw: any = await createBookingAction({
+        eventId: event.id,
+      });
+
+      if (!raw?.success) {
+        toast.error(raw?.message || "Failed to join event");
+        return;
+      }
+
+      const res = raw?.data.data ?? raw;
+
+      if (res?.requiresPayment === true) {
+        if (res?.paymentUrl) {
+          toast.info("Redirecting to payment...");
+
+          setTimeout(() => {
+            window.location.href = res.paymentUrl;
+          }, 200);
+
+          return;
+        }
+
+        toast.error("Payment URL missing");
+        return;
+      }
+
+      if (res?.id) {
+        toast.success("Joined successfully");
+        router.push(`/dashboard/my-booking/${res.id}`);
+        return;
+      }
+
+      console.error("Unexpected booking response:", res);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Card className="group transition-all duration-200 hover:shadow-md">
       <CardContent className="p-4 space-y-3">
-        {/* Top */}
         <div className="flex justify-between items-start gap-3">
           <h3 className="text-base font-semibold leading-tight line-clamp-2">
             {event.title}
@@ -48,18 +88,19 @@ export default function EventCard({ event }: Props) {
           </Badge>
         </div>
 
-        {/* Date */}
         <p className="text-xs text-muted-foreground">
-          {event.startDateTime &&
-            format(new Date(event.startDateTime), "PPP p")}
+          {(() => {
+            if (!event.startDateTime) return "N/A";
+
+            const date = new Date(event.startDateTime);
+            return isNaN(date.getTime()) ? "N/A" : format(date, "PPP p");
+          })()}
         </p>
 
-        {/* Description */}
         <p className="text-sm text-muted-foreground line-clamp-2">
           {event.description}
         </p>
 
-        {/* Meta */}
         <div className="flex justify-between items-center text-xs text-muted-foreground">
           <span className="truncate">{event.organizer.name}</span>
 
@@ -67,12 +108,12 @@ export default function EventCard({ event }: Props) {
             <Badge variant="outline">{event.eventType}</Badge>
 
             <Badge
-              variant={
+              className={
                 event.status === "UPCOMING"
-                  ? "secondary"
+                  ? "bg-blue-100 text-blue-700"
                   : event.status === "ONGOING"
-                    ? "default"
-                    : "destructive"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700"
               }
             >
               {event.status}
@@ -80,17 +121,14 @@ export default function EventCard({ event }: Props) {
           </div>
         </div>
 
-        {/* Capacity */}
         <div className="text-[11px] text-muted-foreground h-[14px] flex items-center">
           {max
-            ? (() => {
-                if (isFull) return "Event Full";
-                return `${spotsLeft} spots left`;
-              })()
+            ? isFull
+              ? "Event Full"
+              : `${spotsLeft} spots left`
             : "Unlimited"}
         </div>
 
-        {/* Actions */}
         <div className="flex gap-2 pt-1">
           <Button
             className="
@@ -103,16 +141,19 @@ export default function EventCard({ event }: Props) {
               active:scale-[0.97]
               cursor-pointer
             "
-            disabled={isDisabled}
+            disabled={isDisabled || loading}
+            onClick={handleJoin}
           >
-            {actionLabel}
+            {loading ? "Processing..." : actionLabel}
           </Button>
 
-          <Link href={`/events/${event.id}`} className="w-[40%]">
-            <Button variant="outline" className="w-full h-9 cursor-pointer">
-              Details
-            </Button>
-          </Link>
+          <Button
+            asChild
+            variant="outline"
+            className="w-[40%] h-9 cursor-pointer"
+          >
+            <Link href={`/events/${event.id}`}>Details</Link>
+          </Button>
         </div>
       </CardContent>
     </Card>

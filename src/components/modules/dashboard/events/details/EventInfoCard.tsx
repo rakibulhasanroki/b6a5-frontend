@@ -1,10 +1,12 @@
 "use client";
 
+import { Event } from "@/types/event";
+
 export default function EventInfoCard({
   event,
   isOrganizer,
 }: {
-  event: any;
+  event: Event;
   isOrganizer: boolean;
 }) {
   const statusMap: Record<string, string> = {
@@ -13,10 +15,12 @@ export default function EventInfoCard({
     ENDED: "bg-red-100 text-red-700",
   };
 
-  const formattedStart = new Intl.DateTimeFormat("en-BD", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(event.startDateTime));
+  const formattedStart = event.startDateTime
+    ? new Intl.DateTimeFormat("en-BD", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(new Date(event.startDateTime))
+    : "N/A";
 
   const formattedEnd = event.endDateTime
     ? new Intl.DateTimeFormat("en-BD", {

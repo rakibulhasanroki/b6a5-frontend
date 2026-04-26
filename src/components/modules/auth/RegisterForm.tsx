@@ -30,17 +30,14 @@ export default function RegisterForm() {
         const redirectToRaw = searchParams.get("redirectTo");
         const redirectTo = getSafeRedirect(redirectToRaw);
 
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/register`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify(value),
+        const res = await fetch(`/api/v1/auth/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+          credentials: "include",
+          body: JSON.stringify(value),
+        });
 
         const data = await res.json();
 

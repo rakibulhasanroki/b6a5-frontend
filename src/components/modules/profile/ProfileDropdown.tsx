@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { logoutAction } from "@/service/auth/auth.actions";
+import { authClient } from "@/lib/auth-client";
 
 export default function ProfileDropdown({ user }: { user: any }) {
   const router = useRouter();
@@ -17,10 +17,10 @@ export default function ProfileDropdown({ user }: { user: any }) {
   const searchParams = useSearchParams();
 
   const handleLogout = async () => {
-    await logoutAction();
-
     const fullPath =
       pathname + (searchParams.toString() ? `?${searchParams}` : "");
+
+    await authClient.signOut();
 
     router.push(
       `/login?success=logout&redirectTo=${encodeURIComponent(fullPath)}`,

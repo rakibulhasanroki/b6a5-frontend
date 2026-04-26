@@ -3,13 +3,13 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    API_URL: z.string().url(),
+    API_URL: z.url(),
     NODE_ENV: z.enum(["development", "production", "test"]),
   },
 
   client: {
-    NEXT_PUBLIC_API_URL: z.string().url(),
-    NEXT_PUBLIC_FRONTEND_URL: z.string().url(),
+    NEXT_PUBLIC_API_URL: z.url(),
+    NEXT_PUBLIC_FRONTEND_URL: z.url(),
   },
 
   runtimeEnv: {

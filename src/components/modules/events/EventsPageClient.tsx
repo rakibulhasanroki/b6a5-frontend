@@ -9,10 +9,10 @@ import EventsFilters from "@/components/modules/events/EventsFilters";
 import EventsGrid from "@/components/modules/events/EventsGrid";
 import { getEventsAction } from "@/service/event/event.actions";
 import { Event } from "@/types/event";
-import { PaginationMeta } from "@/types/api";
-import { Button } from "@/components/ui/button";
+import { PaginatedResponse, PaginationMeta } from "@/types/api";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import Pagination from "@/components/shared/Pagination";
 
 export default function EventsPageClient() {
   const searchParams = useSearchParams();
@@ -29,7 +29,7 @@ export default function EventsPageClient() {
 
   const limit = 10;
 
-  const cacheRef = useRef<Map<string, any>>(new Map());
+  const cacheRef = useRef<Map<string, PaginatedResponse<Event>>>(new Map());
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -75,8 +75,10 @@ export default function EventsPageClient() {
 
       if (cacheRef.current.has(key)) {
         const cached = cacheRef.current.get(key);
-        setData(cached.data);
-        setMeta(cached.meta);
+        if (cached) {
+          setData(cached.data);
+          setMeta(cached.meta);
+        }
         return;
       }
 
@@ -149,29 +151,13 @@ export default function EventsPageClient() {
         </div>
 
         {meta && (
-          <div className="flex justify-center items-center gap-3 mt-6">
-            <Button
-              variant="outline"
-              disabled={page === 1 || loading}
-              onClick={() => setPage((p) => p - 1)}
-              className="cursor-pointer"
-            >
-              Prev
-            </Button>
-
-            <span className="text-sm">
-              Page {meta.page} of {meta.totalPages}
-            </span>
-
-            <Button
-              variant="outline"
-              disabled={page === meta.totalPages || loading}
-              onClick={() => setPage((p) => p + 1)}
-              className="cursor-pointer"
-            >
-              Next
-            </Button>
-          </div>
+          <Pagination
+            page={page}
+            totalPages={meta.totalPages}
+            loading={loading}
+            onPrev={() => setPage((p) => p - 1)}
+            onNext={() => setPage((p) => p + 1)}
+          />
         )}
       </Section>
     </PageContainer>

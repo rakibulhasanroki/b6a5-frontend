@@ -5,17 +5,20 @@ import { sendInvitationAction } from "@/service/invitation/invitation.actions";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { InvitationWithUser } from "@/types/invitation";
 
 export default function InvitationsList({
   invitations,
   eventId,
   eventStatus,
-}: any) {
+}: {
+  invitations: InvitationWithUser[];
+  eventId: string;
+  eventStatus: string;
+}) {
   const [pending, startTransition] = useTransition();
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const router = useRouter();
-
-  const isDisabled = pending || eventStatus !== "UPCOMING";
 
   const handleReinvite = (inv: any) => {
     if (eventStatus !== "UPCOMING") {
@@ -23,22 +26,23 @@ export default function InvitationsList({
       return;
     }
 
-    startTransition(async () => {
-      try {
-        setLoadingId(inv.id);
+    startTransition(() => {
+      setLoadingId(inv.id);
 
-        await sendInvitationAction({
-          eventId,
-          invitedUserId: inv.invitedUser.id,
-        });
+      sendInvitationAction({
+        eventId,
+        invitedUserId: inv.invitedUser.id,
+      }).then((res) => {
+        if (!res?.success) {
+          toast.error(res?.message || "Failed to re-invite");
+          setLoadingId(null);
+          return;
+        }
 
         router.refresh();
         toast.success("Re-invited");
-      } catch (err: any) {
-        toast.error(err.message || "Failed to re-invite");
-      } finally {
         setLoadingId(null);
-      }
+      });
     });
   };
 

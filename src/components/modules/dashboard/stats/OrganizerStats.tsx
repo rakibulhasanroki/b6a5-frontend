@@ -1,4 +1,4 @@
-import { CTA, Grid, StatCard } from "@/components/shared/DahsboardSahred";
+import { CTA, Grid, StatCard } from "@/components/shared/DashboardShared";
 
 export default function OrganizerStats({ stats }: { stats: any }) {
   const data = stats.organizer;
@@ -8,7 +8,7 @@ export default function OrganizerStats({ stats }: { stats: any }) {
       <CTA
         text="You haven’t created any events yet."
         action="Create Event"
-        href="/dashboard/events"
+        href="/dashboard/events/create"
       />
     );
   }

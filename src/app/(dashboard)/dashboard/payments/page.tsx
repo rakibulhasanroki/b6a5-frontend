@@ -2,7 +2,7 @@ import PaymentsContainer from "@/components/modules/dashboard/payments/PaymentsC
 import { getMyPaymentsAction } from "@/service/payment/payment.actions";
 import { getOrganizerPaymentsAction } from "@/service/payment/payment.actions";
 
-export default async function PaymentsPage() {
+export default async function PaymentsPage({}: {}) {
   const myPayments = await getMyPaymentsAction({ page: 1, limit: 5 });
   const organizerPayments = await getOrganizerPaymentsAction({
     page: 1,
