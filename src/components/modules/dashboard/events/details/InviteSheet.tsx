@@ -29,12 +29,14 @@ export default function InviteSheet({
   const isBlocked = eventStatus === "ENDED" || eventStatus === "ONGOING";
 
   const loadUsers = async () => {
-    try {
-      const res = await getAllParticipantsAction();
-      setUsers(res || []);
-    } catch (err: any) {
-      toast.error(err?.message || "Failed to load users");
+    const res = await getAllParticipantsAction();
+
+    if (!res.success) {
+      toast.error(res.message || "Failed to load users");
+      return;
     }
+
+    setUsers(res.data || []);
   };
 
   useEffect(() => {

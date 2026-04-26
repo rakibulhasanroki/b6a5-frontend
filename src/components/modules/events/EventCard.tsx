@@ -34,8 +34,18 @@ export default function EventCard({ event }: Props) {
       const raw: any = await createBookingAction({
         eventId: event.id,
       });
-
       if (!raw?.success) {
+        if (raw?.statusCode === 401) {
+          toast.error("Please login to continue");
+
+          const current = window.location.pathname + window.location.search;
+
+          setTimeout(() => {
+            router.push(`/login?redirectTo=${encodeURIComponent(current)}`);
+          }, 600);
+
+          return;
+        }
         toast.error(raw?.message || "Failed to join event");
         return;
       }
@@ -59,7 +69,7 @@ export default function EventCard({ event }: Props) {
 
       if (res?.id) {
         toast.success("Joined successfully");
-        router.push(`/dashboard/my-booking/${res.id}`);
+        router.push(`/dashboard/my-bookings/${res.id}`);
         return;
       }
 
@@ -97,15 +107,25 @@ export default function EventCard({ event }: Props) {
           })()}
         </p>
 
-        <p className="text-sm text-muted-foreground line-clamp-2">
+        {/* <p className="text-sm text-muted-foreground line-clamp-2">
           {event.description}
-        </p>
+        </p> */}
 
         <div className="flex justify-between items-center text-xs text-muted-foreground">
           <span className="truncate">{event.organizer.name}</span>
 
           <div className="flex items-center gap-2">
             <Badge variant="outline">{event.eventType}</Badge>
+
+            <Badge
+              className={
+                event.visibility === "PUBLIC"
+                  ? "bg-purple-100 text-purple-700"
+                  : "bg-orange-100 text-orange-700"
+              }
+            >
+              {event.visibility}
+            </Badge>
 
             <Badge
               className={

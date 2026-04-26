@@ -25,6 +25,7 @@ export default function ProfileDropdown({ user }: { user: any }) {
     router.push(
       `/login?success=logout&redirectTo=${encodeURIComponent(fullPath)}`,
     );
+    router.refresh();
   };
   return (
     <DropdownMenu>

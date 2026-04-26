@@ -1,6 +1,8 @@
 import MyInvitationsList from "@/components/modules/dashboard/invitations/MyInvitationList";
 import { getMyInvitationsAction } from "@/service/invitation/invitation.actions";
-
+export const metadata = {
+  title: "My Invitations",
+};
 export default async function MyInvitationsPage() {
   const invitations: any = await getMyInvitationsAction();
 

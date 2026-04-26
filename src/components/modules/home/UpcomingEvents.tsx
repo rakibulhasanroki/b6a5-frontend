@@ -5,7 +5,7 @@ export default async function UpcomingEvents() {
   const res = await EventService.getEvents(
     {
       limit: 9,
-      status: "ENDED",
+      status: "UPCOMING",
     },
     {
       cache: "force-cache",

@@ -1,6 +1,5 @@
 "use server";
 
-import { updateTag } from "next/cache";
 import {
   getAllUsersService,
   getMeService,
@@ -12,9 +11,6 @@ import { IUser, IUserStats } from "@/types/user";
 export const updateMeAction = async (formData: FormData) => {
   try {
     const res = await updateMeService(formData);
-
-    updateTag("me");
-
     return {
       success: true,
       data: res.data,

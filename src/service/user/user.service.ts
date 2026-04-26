@@ -6,9 +6,7 @@ export const getMeService = async () => {
   return fetcher<ApiResponse<IUser>>("/users/me", {
     method: "GET",
     auth: true,
-    tags: ["me"],
-    cache: "force-cache",
-    revalidate: 60,
+    cache: "no-store",
   });
 };
 

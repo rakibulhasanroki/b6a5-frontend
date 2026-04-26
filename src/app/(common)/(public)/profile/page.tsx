@@ -3,6 +3,9 @@ import PageHeader from "@/components/custom/PageHeader";
 import ProfileView from "@/components/modules/profile/ProfileView";
 import { getMeService } from "@/service/user/user.service";
 
+export const metadata = {
+  title: "Profile",
+};
 export default async function ProfilePage() {
   const user = await getMeService();
 

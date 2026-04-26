@@ -113,7 +113,18 @@ export const getJoinedEventsAction = async (query?: any) => {
   return res.data;
 };
 
-export const getAllParticipantsAction = async (): Promise<AllParticipant[]> => {
-  const res = await EventService.getAllParticipants();
-  return res.data;
+export const getAllParticipantsAction = async () => {
+  try {
+    const res = await EventService.getAllParticipants();
+
+    return {
+      success: true,
+      data: res.data,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error?.message || "Failed to load users",
+    };
+  }
 };

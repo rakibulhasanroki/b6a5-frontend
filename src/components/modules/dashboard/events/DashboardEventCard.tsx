@@ -55,7 +55,13 @@ export default function DashboardEventCard({
               ? new Date(event.startDateTime).toLocaleDateString()
               : "N/A"}
           </p>
-          <p>{event.location ? event.location : "No location provided"}</p>
+          <p>
+            {event.eventType === "PHYSICAL"
+              ? event.location || "Location TBD"
+              : event.meetingLink
+                ? "Online event"
+                : "Link TBD"}
+          </p>
         </div>
 
         {isOrganizer && (

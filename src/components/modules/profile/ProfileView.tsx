@@ -7,9 +7,11 @@ import CardWrapper from "@/components/custom/CardWrapper";
 import ProfileForm from "./ProfileForm";
 import { updateMeAction } from "@/service/user/user.actions";
 import { IUser } from "@/types/user";
+import { useRouter } from "next/navigation";
 
 export default function ProfileView({ user }: { user: IUser }) {
   const [updating, setUpdating] = useState(false);
+  const router = useRouter();
 
   const handleUpdate = async (formData: FormData) => {
     setUpdating(true);
@@ -23,6 +25,7 @@ export default function ProfileView({ user }: { user: IUser }) {
     }
 
     toast.success("Profile updated successfully");
+    router.refresh();
 
     setUpdating(false);
   };

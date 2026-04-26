@@ -33,7 +33,7 @@ export default function AuthButtons({
         </>
       ) : (
         <>
-          <div className="flex gap-2 md:contents">
+          <div className="flex flex-col gap-3 md:contents">
             <Button
               asChild
               variant="secondary"

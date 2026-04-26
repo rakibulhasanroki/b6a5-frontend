@@ -65,9 +65,13 @@ export async function fetcher<TResponse, TBody = unknown>(
   }
 
   if (!res.ok) {
-    throw new Error(
+    const error = new Error(
       typeof data?.message === "string" ? data.message : "Something went wrong",
-    );
+    ) as Error & { statusCode?: number };
+
+    error.statusCode = res.status;
+
+    throw error;
   }
 
   return data as TResponse;

@@ -3,6 +3,10 @@ import Categories from "@/components/modules/home/Categories";
 import CTASection from "@/components/modules/home/CTASection";
 import UpcomingEvents from "@/components/modules/home/UpcomingEvents";
 
+export const metadata = {
+  title: "Home",
+};
+
 export default function HomePage() {
   return (
     <>

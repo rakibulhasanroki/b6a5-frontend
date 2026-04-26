@@ -20,6 +20,10 @@ import { EventReviewsResponse } from "@/types/review";
 import { getEventReviewsAction } from "@/service/review/review.actions";
 import EventParticipantReview from "@/components/modules/dashboard/events/details/EventParticipantReview";
 
+export const metadata = {
+  title: "Event Details",
+};
+
 export default async function EventDetailsPage({ params }: any) {
   const { eventId } = await params;
 

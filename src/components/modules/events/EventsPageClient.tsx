@@ -27,7 +27,7 @@ export default function EventsPageClient() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
-  const limit = 10;
+  const limit = 12;
 
   const cacheRef = useRef<Map<string, PaginatedResponse<Event>>>(new Map());
 

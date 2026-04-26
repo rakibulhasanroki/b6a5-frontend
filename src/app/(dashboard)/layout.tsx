@@ -1,9 +1,13 @@
 import DashboardLayout from "@/components/layouts/Dashboard/DashboardLayout";
 import { getNavUser } from "@/service/user/user.actions";
 import { IUser } from "@/types/user";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
+export const metadata = {
+  title: {
+    default: "Dashboard",
+    template: " %s | Dashboard",
+  },
+};
 export default async function Layout({
   children,
 }: {

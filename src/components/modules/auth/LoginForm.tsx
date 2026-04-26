@@ -55,6 +55,7 @@ export default function LoginForm() {
         router.replace(
           `/login?success=login&redirectTo=${encodeURIComponent(redirectTo)}`,
         );
+        router.refresh();
       } catch (err: any) {
         router.replace(
           `/login?error=${encodeURIComponent("Something went wrong")}`,

@@ -50,6 +50,7 @@ export const createBookingAction = async (body: {
     return {
       success: false,
       message: error.message || "Failed to create booking",
+      statusCode: error.statusCode || error.status || 500,
     };
   }
 };

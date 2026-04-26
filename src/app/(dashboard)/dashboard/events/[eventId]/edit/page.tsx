@@ -1,6 +1,8 @@
 import EditEventForm from "@/components/modules/dashboard/events/details/EditEventForm";
 import { getEventDetailsAction } from "@/service/event/event.actions";
-
+export const metadata = {
+  title: "Edit Event",
+};
 export default async function EditEventPage({ params }: any) {
   const { eventId } = await params;
 

@@ -1,7 +1,9 @@
 import MyBookingsList from "@/components/modules/dashboard/bookings/MyBookingList";
 import { getMyBookingsAction } from "@/service/bookings/booking.actions";
 import { BookingWithEvent } from "@/types/booking";
-
+export const metadata = {
+  title: "My Bookings",
+};
 export default async function MyBookingsPage() {
   const bookings: BookingWithEvent[] = await getMyBookingsAction();
 

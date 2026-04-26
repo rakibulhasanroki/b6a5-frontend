@@ -2,7 +2,9 @@ import { getBookingByIdAction } from "@/service/bookings/booking.actions";
 import { redirect } from "next/navigation";
 import { BookingWithEvent } from "@/types/booking";
 import { EventStatus } from "@/types/event";
-
+export const metadata = {
+  title: "Booking Details",
+};
 const formatDate = (date?: string | null) => {
   if (!date) return "N/A";
 

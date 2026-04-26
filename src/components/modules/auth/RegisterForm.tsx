@@ -61,6 +61,7 @@ export default function RegisterForm() {
             redirectTo ? `&redirectTo=${encodeURIComponent(redirectTo)}` : ""
           }`,
         );
+        router.refresh();
       } catch {
         router.replace(
           `/register?error=${encodeURIComponent("Something went wrong")}`,

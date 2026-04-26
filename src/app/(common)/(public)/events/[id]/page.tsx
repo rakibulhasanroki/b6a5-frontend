@@ -2,6 +2,10 @@ import EventDetailsClient from "@/components/modules/events/EventDetailsClient";
 import { EventService } from "@/service/event/event.service";
 import { getEventReviewsAction } from "@/service/review/review.actions";
 
+export const metadata = {
+  title: "Event Details",
+};
+
 export default async function EventDetailsPage({
   params,
 }: {

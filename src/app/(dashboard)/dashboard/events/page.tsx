@@ -9,6 +9,10 @@ import {
 } from "@/service/event/event.actions";
 import { Suspense } from "react";
 
+export const metadata = {
+  title: "Events",
+};
+
 export default async function EventsPage({
   searchParams,
 }: {

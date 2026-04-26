@@ -40,6 +40,17 @@ export default function EventDetailsClient({
       });
 
       if (!raw?.success) {
+        if (raw?.statusCode === 401) {
+          toast.error("Please login to continue");
+
+          const current = window.location.pathname + window.location.search;
+
+          setTimeout(() => {
+            router.push(`/login?redirectTo=${encodeURIComponent(current)}`);
+          }, 600);
+
+          return;
+        }
         toast.error(raw?.message || "Failed to join event");
         return;
       }
@@ -63,7 +74,7 @@ export default function EventDetailsClient({
 
       if (res?.id) {
         toast.success("Joined successfully");
-        router.push(`/dashboard/my-booking/${res.id}`);
+        router.push(`/dashboard/my-bookings/${res.id}`);
         return;
       }
 
@@ -100,6 +111,10 @@ export default function EventDetailsClient({
           <div className="flex flex-wrap gap-1.5">
             <Badge variant="outline" className="text-[11px]">
               {event.eventType}
+            </Badge>
+
+            <Badge variant="outline" className="text-[11px]">
+              {event.visibility}
             </Badge>
 
             <Badge
