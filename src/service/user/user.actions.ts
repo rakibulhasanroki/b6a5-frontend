@@ -2,6 +2,7 @@
 
 import { updateTag } from "next/cache";
 import {
+  getAllUsersService,
   getMeService,
   getUserStatsService,
   updateMeService,
@@ -9,11 +10,21 @@ import {
 import { IUser, IUserStats } from "@/types/user";
 
 export const updateMeAction = async (formData: FormData) => {
-  const res = await updateMeService(formData);
+  try {
+    const res = await updateMeService(formData);
 
-  updateTag("me");
+    updateTag("me");
 
-  return res.data;
+    return {
+      success: true,
+      data: res.data,
+    };
+  } catch (err: any) {
+    return {
+      success: false,
+      message: err.message || "Failed to update profile",
+    };
+  }
 };
 
 export const getNavUser = async (): Promise<IUser | null> => {
@@ -32,4 +43,16 @@ export const getUserStatsAction = async (): Promise<IUserStats | null> => {
   } catch {
     return null;
   }
+};
+
+export const getAllUsersAction = async (query?: {
+  page?: number;
+  limit?: number;
+}) => {
+  const res = await getAllUsersService(query);
+
+  return {
+    meta: res.data.meta,
+    data: res.data.data,
+  };
 };

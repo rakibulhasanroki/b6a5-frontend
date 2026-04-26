@@ -1,5 +1,5 @@
 import { fetcher } from "@/lib/api/fetcher";
-import { ApiResponse } from "@/types/api";
+import { ApiResponse, PaginatedApiResponse } from "@/types/api";
 import { IUser, IUserStats } from "@/types/user";
 
 export const getMeService = async () => {
@@ -24,6 +24,18 @@ export const getUserStatsService = async () => {
   return fetcher<ApiResponse<IUserStats>>("/users/stats", {
     method: "GET",
     auth: true,
+    cache: "no-store",
+  });
+};
+
+export const getAllUsersService = async (query?: {
+  page?: number;
+  limit?: number;
+}) => {
+  return fetcher<PaginatedApiResponse<IUser>>("/users", {
+    method: "GET",
+    auth: true,
+    query,
     cache: "no-store",
   });
 };

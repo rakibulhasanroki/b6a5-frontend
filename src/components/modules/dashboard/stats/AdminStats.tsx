@@ -1,4 +1,4 @@
-import { Grid, StatCard } from "@/components/shared/DahsboardSahred";
+import { Grid, StatCard } from "@/components/shared/DashboardShared";
 
 export default function AdminStats({ stats }: { stats: any }) {
   const data = stats.admin;
