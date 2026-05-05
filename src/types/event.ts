@@ -8,6 +8,7 @@ export interface Event {
   id: string;
   title: string;
   description: string;
+  image?: string | null;
 
   startDateTime?: string | null;
   endDateTime?: string | null;
@@ -73,3 +74,11 @@ export interface BookingRequest {
     email: string;
   };
 }
+export type RelatedEvent = Pick<
+  Event,
+  "id" | "title" | "image" | "fee" | "startDateTime"
+> & {
+  organizer: {
+    name: string;
+  };
+};

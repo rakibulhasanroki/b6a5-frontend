@@ -71,6 +71,13 @@ export default function MobileNav({
               >
                 About
               </Link>
+              <Link
+                href="/contact"
+                onClick={() => setOpen(false)}
+                className="flex items-center rounded-lg px-4 py-2.5 text-[15px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all duration-200"
+              >
+                Contact
+              </Link>
             </div>
 
             {/* Auth */}

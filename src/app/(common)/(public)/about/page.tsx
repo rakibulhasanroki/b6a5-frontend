@@ -3,6 +3,7 @@ import PageContainer from "@/components/custom/PageContainer";
 import Section from "@/components/custom/Section";
 import PageHeader from "@/components/custom/PageHeader";
 import { BodyText, SectionTitle } from "@/components/custom/Typography";
+import { Calendar, CreditCard, Users, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About",
@@ -11,33 +12,45 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <PageContainer className="py-6 md:py-8">
-      <div className="mx-auto max-w-3xl space-y-6 md:space-y-7">
+      <div className="mx-auto max-w-3xl space-y-6">
         <PageHeader
           title="About Planora"
-          subtitle="A modern platform for managing and joining events."
+          subtitle="Event booking and management system"
         />
 
-        <Section className="rounded-lg border border-border bg-card p-4 md:p-5">
-          <SectionTitle>Our Mission</SectionTitle>
+        <Section className="space-y-3">
+          <SectionTitle>System Overview</SectionTitle>
           <BodyText>
-            Planora simplifies event management with a fast, intuitive, and
-            reliable experience.
+            Planora is a booking-based event management system where users join
+            events through controlled capacity, authentication, and optional
+            payment flows.
           </BodyText>
         </Section>
 
-        <Section className="rounded-lg border border-border bg-card p-4 md:p-5">
-          <SectionTitle>What We Offer</SectionTitle>
-          <BodyText>
-            Manage events, registrations, and participants efficiently in one
-            place.
-          </BodyText>
-        </Section>
+        <Section className="space-y-3">
+          <SectionTitle>Core Features</SectionTitle>
 
-        <Section className="rounded-lg border border-border bg-card p-4 md:p-5">
-          <SectionTitle>Why Planora</SectionTitle>
-          <BodyText>
-            Clean UI, modern architecture, and performance-focused design.
-          </BodyText>
+          <div className="space-y-3 text-sm">
+            <div className="flex gap-2">
+              <Calendar className="w-4 h-4 mt-0.5 text-muted-foreground" />
+              Event creation with scheduling (start/end time)
+            </div>
+
+            <div className="flex gap-2">
+              <Users className="w-4 h-4 mt-0.5 text-muted-foreground" />
+              Booking-based participant system (no direct joining)
+            </div>
+
+            <div className="flex gap-2">
+              <CreditCard className="w-4 h-4 mt-0.5 text-muted-foreground" />
+              Stripe-based payment flow for paid events
+            </div>
+
+            <div className="flex gap-2">
+              <ShieldCheck className="w-4 h-4 mt-0.5 text-muted-foreground" />
+              Organizer-controlled event lifecycle (upcoming, ongoing, ended)
+            </div>
+          </div>
         </Section>
       </div>
     </PageContainer>

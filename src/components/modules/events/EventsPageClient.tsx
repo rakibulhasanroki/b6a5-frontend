@@ -13,6 +13,7 @@ import { PaginatedResponse, PaginationMeta } from "@/types/api";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Pagination from "@/components/shared/Pagination";
+import EventsSort from "./EventSort";
 
 export default function EventsPageClient() {
   const searchParams = useSearchParams();
@@ -23,6 +24,11 @@ export default function EventsPageClient() {
   const [filter, setFilter] = useState(() => {
     return searchParams.get("filter") || "ALL";
   });
+
+  const [sort, setSort] = useState(() => {
+    return searchParams.get("sort") || "NEWEST";
+  });
+
   const [meta, setMeta] = useState<PaginationMeta | null>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -44,6 +50,10 @@ export default function EventsPageClient() {
     setPage(1);
   }, [filter]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [sort]);
+
   const buildQuery = () => {
     if (filter === "ALL") return {};
 
@@ -62,6 +72,18 @@ export default function EventsPageClient() {
     return {};
   };
 
+  const buildSortQuery = () => {
+    if (sort === "PRICE_ASC") {
+      return { sortBy: "fee", sortOrder: "asc" };
+    }
+
+    if (sort === "PRICE_DESC") {
+      return { sortBy: "fee", sortOrder: "desc" };
+    }
+
+    return { sortBy: "createdAt", sortOrder: "desc" };
+  };
+
   useEffect(() => {
     const fetchEvents = async () => {
       const query = {
@@ -69,6 +91,7 @@ export default function EventsPageClient() {
         limit,
         search: debouncedSearch || undefined,
         ...buildQuery(),
+        ...buildSortQuery(),
       };
 
       const key = JSON.stringify(query);
@@ -96,14 +119,14 @@ export default function EventsPageClient() {
     };
 
     fetchEvents();
-  }, [page, debouncedSearch, filter]);
-
+  }, [page, debouncedSearch, filter, sort]);
   useEffect(() => {
     const params = new URLSearchParams();
 
     if (debouncedSearch) params.set("search", debouncedSearch);
     if (filter && filter !== "ALL") params.set("filter", filter);
     if (page > 1) params.set("page", String(page));
+    if (sort && sort !== "NEWEST") params.set("sort", sort);
 
     const next = `?${params.toString()}`;
     const current = `?${searchParams.toString()}`;
@@ -111,7 +134,7 @@ export default function EventsPageClient() {
     if (next !== current) {
       router.replace(next);
     }
-  }, [debouncedSearch, filter, page]);
+  }, [debouncedSearch, filter, page, sort]);
 
   useEffect(() => {
     const sp = new URLSearchParams(searchParams.toString());
@@ -119,6 +142,7 @@ export default function EventsPageClient() {
     const urlSearch = sp.get("search") || "";
     const urlFilter = sp.get("filter") || "ALL";
     const urlPage = Number(sp.get("page") || 1);
+    const urlSort = sp.get("sort") || "NEWEST";
 
     if (urlSearch !== search) {
       setSearch(urlSearch);
@@ -132,6 +156,10 @@ export default function EventsPageClient() {
     if (urlPage !== page) {
       setPage(urlPage);
     }
+
+    if (urlSort !== sort) {
+      setSort(urlSort);
+    }
   }, [searchParams]);
 
   return (
@@ -142,7 +170,12 @@ export default function EventsPageClient() {
 
       <Section className="space-y-4">
         <EventsSearch value={search} onChange={setSearch} />
-        <EventsFilters active={filter} onChange={setFilter} />
+
+        {/*   LAYOUT */}
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <EventsFilters active={filter} onChange={setFilter} />
+          <EventsSort value={sort} onChange={setSort} />
+        </div>
       </Section>
 
       <Section>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Event } from "@/types/event";
+import { Event, RelatedEvent } from "@/types/event";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,13 +13,16 @@ import { createBookingAction } from "@/service/bookings/booking.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import RelatedEvents from "./RelatedEvents";
 
 export default function EventDetailsClient({
   event,
   reviews,
+  relatedEvents,
 }: {
   event: Event;
   reviews: EventReviewsResponse;
+  relatedEvents: RelatedEvent[];
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -60,11 +63,9 @@ export default function EventDetailsClient({
       if (res?.requiresPayment === true) {
         if (res?.paymentUrl) {
           toast.info("Redirecting to payment...");
-
           setTimeout(() => {
             window.location.href = res.paymentUrl;
           }, 200);
-
           return;
         }
 
@@ -78,7 +79,6 @@ export default function EventDetailsClient({
         return;
       }
 
-      console.error("Unexpected booking response:", res);
       toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
@@ -86,18 +86,39 @@ export default function EventDetailsClient({
   };
 
   return (
-    <div className="container py-5">
+    <div className="container py-5 space-y-4">
       {/* HERO */}
-      <div className="mb-4">
-        <div className="flex flex-col gap-2">
+      <div className="relative w-full h-52 md:h-60 rounded-xl overflow-hidden border">
+        {event.image ? (
+          <>
+            <img
+              src={event.image}
+              alt={event.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40" />
+          </>
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-purple-50 via-white to-purple-100" />
+        )}
+
+        {/* Overlay */}
+        <div className="absolute inset-0 flex flex-col justify-end p-4">
           <div className="flex items-start justify-between gap-2">
-            <h1 className="text-xl md:text-2xl font-semibold leading-tight">
+            <h1
+              className={`text-lg md:text-xl font-semibold leading-tight ${
+                event.image ? "text-white" : "text-gray-900"
+              }`}
+            >
               {event.title}
             </h1>
 
             <Badge
-              variant="secondary"
-              className="shrink-0 text-[11px] px-2 py-0.5"
+              className={`text-[11px] px-2 py-0.5 ${
+                event.image
+                  ? "bg-white/90 text-gray-900"
+                  : "bg-white text-gray-900 border"
+              }`}
             >
               {isFree
                 ? "Free"
@@ -108,23 +129,29 @@ export default function EventDetailsClient({
             </Badge>
           </div>
 
-          <div className="flex flex-wrap gap-1.5">
-            <Badge variant="outline" className="text-[11px]">
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            <Badge
+              variant="outline"
+              className={`text-[11px] ${event.image ? "bg-white/80" : ""}`}
+            >
               {event.eventType}
             </Badge>
 
-            <Badge variant="outline" className="text-[11px]">
+            <Badge
+              variant="outline"
+              className={`text-[11px] ${event.image ? "bg-white/80" : ""}`}
+            >
               {event.visibility}
             </Badge>
 
             <Badge
-              className={
+              className={`text-[11px] ${
                 event.status === "UPCOMING"
                   ? "bg-blue-100 text-blue-700"
                   : event.status === "ONGOING"
                     ? "bg-green-100 text-green-700"
                     : "bg-red-100 text-red-700"
-              }
+              }`}
             >
               {event.status}
             </Badge>
@@ -137,41 +164,8 @@ export default function EventDetailsClient({
         {/* LEFT */}
         <div className="lg:col-span-2 space-y-4">
           <Card>
-            <CardContent className="p-4 flex flex-col gap-2 text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <CalendarDays className="w-4 h-4" />
-                {event.startDateTime
-                  ? format(new Date(event.startDateTime), "PPP p")
-                  : "Date not set"}
-              </div>
-
-              {event.eventType === "PHYSICAL" ? (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  {event.location || "TBD"}
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Globe className="w-4 h-4" />
-                  {event.meetingLink ? (
-                    <a
-                      href={event.meetingLink}
-                      target="_blank"
-                      className="underline hover:text-primary transition"
-                    >
-                      Join link
-                    </a>
-                  ) : (
-                    "Link TBD"
-                  )}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
             <CardContent className="p-4 space-y-1.5">
-              <h2 className="text-sm font-medium">About</h2>
+              <h2 className="text-sm font-medium">Description</h2>
               <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
                 {event.description}
               </p>
@@ -194,32 +188,55 @@ export default function EventDetailsClient({
 
         {/* RIGHT */}
         <div className="space-y-4 lg:sticky lg:top-16 h-fit">
+          {/* MAIN INFO CARD */}
           <Card>
             <CardContent className="p-4 space-y-4">
-              <Button
-                className="
-                  w-full h-9 text-sm
-                  bg-primary text-primary-foreground
-                  hover:bg-primary/90
-                  transition-all duration-200
-                  shadow-sm hover:shadow-md
-                  hover:scale-[1.02]
-                  active:scale-[0.97]
-                  cursor-pointer
-                "
-                disabled={event.status === "ENDED" || isFull || loading}
-                onClick={handleJoin}
-              >
-                {loading ? "Processing..." : actionLabel}
-              </Button>
+              {/* TIME + LOCATION */}
+              <div className="flex flex-col gap-2 text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <CalendarDays className="w-4 h-4" />
+                  {event.startDateTime
+                    ? `Starts: ${format(new Date(event.startDateTime), "PPP p")}`
+                    : "Date not set"}
+                </div>
 
+                {event.endDateTime && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <CalendarDays className="w-4 h-4" />
+                    Ends: {format(new Date(event.endDateTime), "PPP p")}
+                  </div>
+                )}
+
+                {event.eventType === "PHYSICAL" ? (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <MapPin className="w-4 h-4" />
+                    {event.location || "TBD"}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Globe className="w-4 h-4" />
+                    {event.meetingLink ? (
+                      <a
+                        href={event.meetingLink}
+                        target="_blank"
+                        className="underline hover:text-primary transition"
+                      >
+                        Join link
+                      </a>
+                    ) : (
+                      "Link TBD"
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* CAPACITY + ORGANIZER */}
               <div className="space-y-2.5 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2 text-muted-foreground">
                     <Users className="w-4 h-4" />
                     Capacity
                   </span>
-
                   <span className="font-medium text-sm">
                     {event.maxParticipants
                       ? isFull
@@ -234,14 +251,25 @@ export default function EventDetailsClient({
                     <User className="w-4 h-4" />
                     Organizer
                   </span>
-
                   <span className="font-medium truncate max-w-[120px] text-sm">
                     {event.organizer?.name || "N/A"}
                   </span>
                 </div>
               </div>
+
+              {/* BUTTON AT BOTTOM */}
+              <Button
+                className="w-full h-9 text-sm bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.97] cursor-pointer"
+                disabled={event.status === "ENDED" || isFull || loading}
+                onClick={handleJoin}
+              >
+                {loading ? "Processing..." : actionLabel}
+              </Button>
             </CardContent>
           </Card>
+
+          {/* RELATED EVENTS CARD (SEPARATE) */}
+          <RelatedEvents events={relatedEvents} />
         </div>
       </div>
     </div>

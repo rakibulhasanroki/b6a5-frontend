@@ -5,6 +5,7 @@ import {
   BookingRequest,
   CreateEventPayload,
   Event,
+  RelatedEvent,
 } from "@/types/event";
 
 interface GetEventsQuery {
@@ -45,7 +46,7 @@ export const EventService = {
     return res.data;
   },
 
-  createEvent: (body: CreateEventPayload) =>
+  createEvent: (body: CreateEventPayload | FormData) =>
     fetcher<ApiResponse<Event>>("/events", {
       method: "POST",
       body,
@@ -65,7 +66,12 @@ export const EventService = {
       auth: true,
     }),
 
-  getMyEvents: (query?: { page?: number; limit?: number }) =>
+  getMyEvents: (query?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: "UPCOMING" | "ONGOING" | "ENDED";
+  }) =>
     fetcher<PaginatedApiResponse<Event>>("/events/my", {
       query,
       auth: true,
@@ -74,7 +80,12 @@ export const EventService = {
       revalidate: 60,
     }),
 
-  getJoinedEvents: (query?: { page?: number; limit?: number }) =>
+  getJoinedEvents: (query?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: "UPCOMING" | "ONGOING" | "ENDED";
+  }) =>
     fetcher<PaginatedApiResponse<Event>>("/events/joined", {
       query,
       auth: true,
@@ -92,5 +103,12 @@ export const EventService = {
     fetcher<ApiResponse<AllParticipant[]>>("/events/participants/all", {
       auth: true,
       cache: "no-store",
+    }),
+
+  getRelatedEvents: (eventId: string) =>
+    fetcher<ApiResponse<RelatedEvent[]>>(`/events/${eventId}/related`, {
+      cache: "no-store",
+      tags: [`event-related-${eventId}`],
+      revalidate: 60,
     }),
 };

@@ -44,6 +44,10 @@ export const getUserStatsAction = async (): Promise<IUserStats | null> => {
 export const getAllUsersAction = async (query?: {
   page?: number;
   limit?: number;
+  search?: string;
+  role?: "USER" | "ADMIN";
+  sortBy?: "name" | "email" | "createdAt";
+  sortOrder?: "asc" | "desc";
 }) => {
   const res = await getAllUsersService(query);
 

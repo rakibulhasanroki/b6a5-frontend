@@ -29,6 +29,10 @@ export const getUserStatsService = async () => {
 export const getAllUsersService = async (query?: {
   page?: number;
   limit?: number;
+  search?: string;
+  role?: "USER" | "ADMIN";
+  sortBy?: "name" | "email" | "createdAt";
+  sortOrder?: "asc" | "desc";
 }) => {
   return fetcher<PaginatedApiResponse<IUser>>("/users", {
     method: "GET",

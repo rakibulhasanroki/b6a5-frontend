@@ -1,7 +1,26 @@
 import * as z from "zod";
 
 export const loginSchema = z.object({
-  email: z.email("Please enter a valid email address"),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email is required")
+    .refine(
+      (val) => val.length === 0 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+      {
+        message: "Enter a valid email",
+      },
+    )
+    .refine(
+      (val) => {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return true;
+
+        return /\.(com|net|org|edu|gov)$/i.test(val);
+      },
+      {
+        message: "Email must have a valid domain (e.g. .com, .net)",
+      },
+    ),
 
   password: z
     .string()
@@ -12,7 +31,7 @@ export const loginSchema = z.object({
     })
     .refine(
       (val) => {
-        if (val.length < 8) return true; // skip this check until length is valid
+        if (val.length < 8) return true;
 
         const hasLower = /[a-z]/.test(val);
         const hasUpper = /[A-Z]/.test(val);

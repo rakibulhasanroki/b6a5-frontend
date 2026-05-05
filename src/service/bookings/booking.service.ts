@@ -1,5 +1,5 @@
 import { fetcher } from "@/lib/api/fetcher";
-import { ApiResponse } from "@/types/api";
+import { ApiResponse, PaginatedApiResponse } from "@/types/api";
 import { Booking, BookingWithEvent, BookingWithUser } from "@/types/booking";
 
 export const BookingService = {
@@ -10,8 +10,13 @@ export const BookingService = {
       auth: true,
     }),
 
-  getMyBookings: () =>
-    fetcher<ApiResponse<BookingWithEvent[]>>("/bookings/my", {
+  getMyBookings: (query?: {
+    page?: number;
+    limit?: number;
+    status?: "CONFIRMED" | "PENDING" | "CANCELLED" | "BANNED";
+  }) =>
+    fetcher<PaginatedApiResponse<BookingWithEvent>>("/bookings/my", {
+      query,
       auth: true,
       cache: "force-cache",
       revalidate: 30,

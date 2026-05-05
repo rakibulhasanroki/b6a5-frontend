@@ -18,5 +18,14 @@ export default async function EventDetailsPage({
     limit: 5,
   });
 
-  return <EventDetailsClient event={event} reviews={reviews} />;
+  const relatedEventsRes = await EventService.getRelatedEvents(id);
+  const relatedEvents = relatedEventsRes.data;
+
+  return (
+    <EventDetailsClient
+      event={event}
+      reviews={reviews}
+      relatedEvents={relatedEvents}
+    />
+  );
 }

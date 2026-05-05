@@ -26,6 +26,9 @@ export default function DesktopNav() {
       <Link href="/about" className={linkClass("/about")}>
         About
       </Link>
+      <Link href="/contact" className={linkClass("/contact")}>
+        Contact
+      </Link>
     </nav>
   );
 }

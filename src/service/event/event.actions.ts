@@ -7,6 +7,7 @@ import {
   BookingRequest,
   CreateEventPayload,
   Event,
+  RelatedEvent,
 } from "@/types/event";
 import { updateTag } from "next/cache";
 
@@ -25,7 +26,12 @@ export const getEventsAction = async (
   };
 };
 
-export const getMyEventsAction = async (query?: any) => {
+export const getMyEventsAction = async (query?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: "UPCOMING" | "ONGOING" | "ENDED";
+}) => {
   const res = await EventService.getMyEvents(query);
   return res.data;
 };
@@ -44,7 +50,9 @@ export const getEventRequestsAction = async (
   return res.data;
 };
 
-export const createEventAction = async (body: CreateEventPayload) => {
+export const createEventAction = async (
+  body: CreateEventPayload | FormData,
+) => {
   try {
     const res = await EventService.createEvent(body);
 
@@ -108,7 +116,12 @@ export const deleteEventAction = async (id: string) => {
     };
   }
 };
-export const getJoinedEventsAction = async (query?: any) => {
+export const getJoinedEventsAction = async (query?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: "UPCOMING" | "ONGOING" | "ENDED";
+}) => {
   const res = await EventService.getJoinedEvents(query);
   return res.data;
 };
@@ -127,4 +140,11 @@ export const getAllParticipantsAction = async () => {
       message: error?.message || "Failed to load users",
     };
   }
+};
+
+export const getRelatedEventsAction = async (
+  eventId: string,
+): Promise<RelatedEvent[]> => {
+  const res = await EventService.getRelatedEvents(eventId);
+  return res.data;
 };

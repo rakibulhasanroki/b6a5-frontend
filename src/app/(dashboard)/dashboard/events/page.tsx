@@ -16,7 +16,12 @@ export const metadata = {
 export default async function EventsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; page?: string }>;
+  searchParams: {
+    tab?: string;
+    page?: string;
+    search?: string;
+    status?: string;
+  };
 }) {
   const params = await searchParams;
 
@@ -24,10 +29,24 @@ export default async function EventsPage({
   const page = Number(params?.page || 1);
   const limit = 6;
 
+  const rawStatus = params?.status;
+
+  const status: "UPCOMING" | "ONGOING" | "ENDED" | undefined =
+    rawStatus === "UPCOMING" || rawStatus === "ONGOING" || rawStatus === "ENDED"
+      ? rawStatus
+      : undefined;
+
+  const query = {
+    page,
+    limit,
+    search: params?.search || "",
+    status,
+  };
+
   const res =
     tab === "my-events"
-      ? await getJoinedEventsAction({ page, limit })
-      : await getMyEventsAction({ page, limit });
+      ? await getJoinedEventsAction(query)
+      : await getMyEventsAction(query);
 
   const events = res.data;
   const meta = res.meta;

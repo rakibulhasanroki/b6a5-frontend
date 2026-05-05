@@ -21,6 +21,20 @@ export default function EventsSection({
   const [loading, setLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [search, setSearch] = useState("");
+  const [visibility, setVisibility] = useState<"" | "PUBLIC" | "PRIVATE">("");
+
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 400);
+
+    return () => clearTimeout(t);
+  }, [search]);
+
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
@@ -29,6 +43,8 @@ export default function EventsSection({
           {
             page,
             limit: meta.limit,
+            search: debouncedSearch || undefined,
+            visibility: visibility || undefined,
           },
           {
             cache: "no-store",
@@ -43,7 +59,7 @@ export default function EventsSection({
     };
 
     fetchEvents();
-  }, [page]);
+  }, [page, debouncedSearch, visibility]);
 
   const handleDelete = async (id: string) => {
     setDeletingId(id);
@@ -62,6 +78,8 @@ export default function EventsSection({
         {
           page,
           limit: meta.limit,
+          search: debouncedSearch || undefined,
+          visibility: visibility || undefined,
         },
         { cache: "no-store" },
       );
@@ -75,6 +93,32 @@ export default function EventsSection({
 
   return (
     <div className="space-y-4">
+      {/* 🔥 CONTROLS */}
+      <div className="flex gap-2 flex-wrap">
+        {/* search */}
+        <input
+          placeholder="Search events..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="border px-2 py-1 rounded text-sm"
+        />
+
+        {/* visibility filter */}
+        <select
+          value={visibility}
+          onChange={(e) => {
+            setVisibility(e.target.value as any);
+            setPage(1);
+          }}
+          className="border px-2 py-1 rounded text-sm"
+        >
+          <option value="">All</option>
+          <option value="PUBLIC">Public</option>
+          <option value="PRIVATE">Private</option>
+        </select>
+      </div>
+
+      {/* LIST */}
       <div className="space-y-3">
         {events.map((event) => (
           <div
@@ -103,12 +147,13 @@ export default function EventsSection({
         ))}
       </div>
 
+      {/* PAGINATION */}
       <Pagination
         page={page}
         totalPages={meta.totalPages}
         loading={loading}
-        onPrev={() => setPage((p) => p - 1)}
-        onNext={() => setPage((p) => p + 1)}
+        onPrev={() => setPage((p) => (p > 1 ? p - 1 : p))}
+        onNext={() => setPage((p) => (p < meta.totalPages ? p + 1 : p))}
       />
     </div>
   );

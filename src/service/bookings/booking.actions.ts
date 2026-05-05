@@ -5,9 +5,16 @@ import { BookingService } from "./booking.service";
 import { updateTag } from "next/cache";
 
 // READ
-export const getMyBookingsAction = async (): Promise<BookingWithEvent[]> => {
-  const res = await BookingService.getMyBookings();
-  return res.data;
+export const getMyBookingsAction = async (query?: {
+  page?: number;
+  limit?: number;
+  status?: "CONFIRMED" | "PENDING" | "CANCELLED" | "BANNED";
+}) => {
+  const res = await BookingService.getMyBookings(query);
+  return {
+    meta: res.data.meta,
+    data: res.data.data,
+  };
 };
 
 export const getBookingByIdAction = async (

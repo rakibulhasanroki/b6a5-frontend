@@ -5,6 +5,7 @@ import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import GoogleLoginButton from "./GoogleLoginButton";
 import { useAuthContainer } from "./useAuthContainer";
+import AuthSocial from "./AuthSocial";
 
 type Props = {
   mode: "login" | "register";
@@ -125,7 +126,7 @@ export default function AuthContainerDesktop({ mode }: Props) {
           </div>
         </div>
       </div>
-      <GoogleLoginButton />
+      <AuthSocial />
     </div>
   );
 }

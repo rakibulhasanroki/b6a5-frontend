@@ -52,3 +52,16 @@ export interface OrganizerPaymentsResponse {
   };
   data: OrganizerPaymentGroup[];
 }
+
+export interface MyPaymentsQuery {
+  page?: number;
+  limit?: number;
+  sort?: "asc" | "desc";
+}
+
+export interface OrganizerPaymentsQuery {
+  page?: number;
+  limit?: number;
+  sort?: "asc" | "desc";
+  search?: string;
+}
